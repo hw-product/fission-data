@@ -1,0 +1,7 @@
+require 'fission-data/version'
+require 'fission-data/account'
+require 'fission-data/identity'
+require 'fission-data/job'
+require 'fission-data/product'
+require 'fission-data/repository'
+require 'fission-data/user'
