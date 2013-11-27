@@ -23,7 +23,7 @@ module Fission
         end
 
         def connection_arguments(path=nil)
-          Fission::Data::Hash.symbolize_keys(
+          Fission::Data::Hash.symbolize_hash(
             MultiJson.load(File.read(path || ENV['FISSION_RIAK_CONFIG'] || FISSION_RIAK_CONFIG))
           )
         end
