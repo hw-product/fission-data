@@ -1,4 +1,4 @@
-require 'fission-data/model_base'
+require 'fission-data'
 
 class Product < ModelBase
 

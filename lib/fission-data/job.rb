@@ -1,4 +1,4 @@
-require 'fission-data/model_base'
+require 'fission-data'
 
 class Job < ModelBase
   bucket :jobs
@@ -8,7 +8,6 @@ class Job < ModelBase
   value :last_update, :class => Time
   value :percent_complete, :class => Fixnum
 
-  link :user, User, :to => :jobs
   link :account, Account, :to => :jobs
 
   class << self

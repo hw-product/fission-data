@@ -1,4 +1,4 @@
-require 'fission-data/model_base'
+require 'fission-data'
 
 class User < ModelBase
 
@@ -15,7 +15,6 @@ class User < ModelBase
   link :base_account, Account, :to => :owner
   links :accounts, Account, :to => :members
   links :identities, Identity, :to => :user, :dependent => true
-  links :jobs, Job
 
   class << self
     def display_attributes

@@ -1,7 +1,10 @@
 require 'fission-data/version'
-require 'fission-data/account'
-require 'fission-data/identity'
-require 'fission-data/job'
-require 'fission-data/product'
-require 'fission-data/repository'
-require 'fission-data/user'
+
+autoload :Account, 'fission-data/account'
+autoload :Identity, 'fission-data/identity'
+autoload :Job, 'fission-data/job'
+autoload :Product, 'fission-data/product'
+autoload :Repository, 'fission-data/repository'
+autoload :User, 'fission-data/user'
+
+autoload :ModelBase, 'fission-data/model_base'

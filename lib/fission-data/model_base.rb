@@ -1,3 +1,4 @@
+require 'fission-data'
 require 'securerandom'
 require 'ostruct'
 require 'risky'
@@ -15,7 +16,6 @@ class ModelBase < Risky
         args = connection_arguments(args[:file])
       end
       Risky.riak = Riak::Client.new(args)
-#      Risky.riak = Riak::Client.new(:nodes => [{:host => '10.0.3.64'}])
     end
 
     def connection_arguments(path=nil)
