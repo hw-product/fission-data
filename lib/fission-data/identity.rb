@@ -77,15 +77,21 @@ module Fission
             if(user)
               raise 'User exists. Where is ident!?'
             else
-              identity = Identity.new
-              identity.provider = attributes[:provider]
-              identity.uid = attributes[:uid]
-              identity.extras = attributes[:extras]
-              identity.credentials = attributes[:credentials]
-              identity.infos = attributes[:info]
-              unless(identity.save)
-                Rails.logger.error identity.errors.inspect
-                raise identity.errors unless identity.save
+              user = User.create(:username => username)
+              if(user)
+                identity = Identity.new
+                identity.provider = attributes[:provider]
+                identity.uid = attributes[:uid]
+                identity.extras = attributes[:extras]
+                identity.credentials = attributes[:credentials]
+                identity.infos = attributes[:info]
+                identity.user = user
+                unless(identity.save)
+                  Rails.logger.error identity.errors.inspect
+                  raise identity.errors unless identity.save
+                end
+              else
+                raise "Failed to create user!"
               end
             end
           end
