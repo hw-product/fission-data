@@ -5,20 +5,29 @@ module Fission
 
     class Identity < ModelBase
 
-      include ::OmniAuth::Identity::Model
-      include ::OmniAuth::Identity::SecurePassword
-
-      has_secure_password
+      SALT = 'fission01'
 
       def before_create
-        values[:provider_identity] = [values[:provider], values[:uid]].compact.join('_')
+        super
+        self.provider_identity = [provider, uid].compact.join('_')
+      end
+
+      def before_save
+        super
+        if(password)
+          self.password_digest = checksum(password)
+        end
       end
 
       def after_create
-        u = self.user
-        u.add_identities self
-        u.save
+        super
+        user = self.user
+        user.add_identities self
+        user.save
       end
+
+      validates_confirmation_of :password
+      attr_accessor :password, :password_confirmation
 
       bucket :identities
 
@@ -31,31 +40,31 @@ module Fission
       value :infos, :class => Fission::Data::Hash, :default => {}.with_indifferent_access
       value :password_digest, :class => String
 
-      attr_accessor :password_confirmation
-
       link :user, User, :to => :identities, :dependent => true
 
       index :provider_identity, :unique => true
 
       class << self
 
+        # uid:: User id
+        # provider:: provider name
+        # Returns lookup key
         def lookup_key(uid, provider=nil)
           [provider, uid].compact.join('_').to_sym
         end
 
+        # uid:: User id
+        # provider:: provider name
+        # Return identity
         def lookup(uid, provider=nil)
-          provider ||= 'fission'
+          provider ||= 'internal'
           self.by_provider_identity(lookup_key(uid, provider))
         end
 
-        def locate(search_hash)
-          lookup(search_hash[:uid], search_hash[:provider])
-        end
-
+        # attributes:: attribute hash
+        # Find existing identity or create new based on provided attributes
         def find_or_create_via_omniauth(attributes, existing_user=nil)
-          provider = attributes[:provider] || 'fission'
-          unique_id = attributes[:uid] || attributes[:unique_id]
-          identity = lookup(unique_id, provider)
+          identity = lookup(attributes[:uid], attributes[:provider])
           if(identity)
             Rails.logger.info "Found existing identity: #{identity.inspect}"
           else
@@ -68,19 +77,12 @@ module Fission
             if(user)
               raise 'User exists. Where is ident!?'
             else
-              identity = Identity.create(
-                attributes.merge(
-                  :username => username,
-                  :unique_id => unique_id,
-                )
-              )
+              identity = Identity.new
+              identity.provider = attributes[:provider]
+              identity.uid = attributes[:uid]
               identity.extras = attributes[:extras]
               identity.credentials = attributes[:credentials]
               identity.infos = attributes[:info]
-              identity.provider = provider
-              identity.uid = unique_id
-              identity.password = attributes[:password]
-              identity.password_confirmation = attributes[:password_confirmation]
               unless(identity.save)
                 Rails.logger.error identity.errors.inspect
                 raise identity.errors unless identity.save
@@ -90,37 +92,21 @@ module Fission
           identity
         end
 
-        def create(attributes)
-          username = attributes[:username] || attributes[:unique_id]
-          user = User.by_username(username)
-          unless(user)
-            user = User.new
-            user.username = username
-            user.save
-            user.create_account
-          end
-
-          ident_key = lookup_key(attributes[:unique_id], 'fission')
-          identity = Identity.by_provider_identity(ident_key)
-          unless(identity)
-            identity = Identity.new
-            identity.provider_identity = lookup_key(attributes[:unique_id], 'fission')
-            identity.password = attributes[:password]
-            identity.password_confirmation = attributes[:password_confirmation]
-            identity.email = attributes[:email]
-            identity.uid = attributes[:unique_id]
-            identity.user = user
-            unless(identity.save)
-              Rails.logger.error identity.errors.inspect
-              raise identity.errors
-            end
-          end
-          identity
-        end
-
       end
 
-    end
+      def authenticate(auth_password)
+        if(password_digest)
+          password_digest == checksum(auth_password)
+        end
+      end
 
+      protected
+
+      # string:: String
+      # Return salted checksum of string
+      def checksum(string)
+        Digest::SHA512.hexdigest("#{SALT}_#{string}")
+      end
+    end
   end
 end
