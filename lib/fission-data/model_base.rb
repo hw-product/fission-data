@@ -154,9 +154,8 @@ module Fission
 
       def initialize(*args)
         @run_state = OpenStruct.new
-        key = args.first unless args.first.is_a?(Hash)
-        values = args.detect{|item| item.is_a?(Hash) } || {}
-        key ||= SecureRandom.uuid
+        key = args.detect{|item| !item.is_a?(::Hash) } || SecureRandom.uuid
+        values = args.detect{|item| item.is_a?(::Hash) } || {}
         super(key, values)
       end
 
