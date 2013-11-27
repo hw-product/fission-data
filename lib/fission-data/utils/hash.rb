@@ -29,7 +29,7 @@ module Fission
 
         # Copied out of carnivore. Can we share?
         def symbolize_hash(hash)
-          Hash[*(
+          ::Hash[*(
               hash.map do |k,v|
                 if(k.is_a?(String))
                   key = k.gsub(/(?<![A-Z])([A-Z])/, '_\1').sub(/^_/, '').downcase.to_sym
@@ -37,7 +37,7 @@ module Fission
                   key = k
                 end
                 case v
-                when Hash
+                when ::Hash
                   val = symbolize_hash(v)
                 when Array
                   val = v.map{|value| symbolize_hash(value)}
