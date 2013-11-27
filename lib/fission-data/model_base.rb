@@ -23,7 +23,9 @@ module Fission
         end
 
         def connection_arguments(path=nil)
-          MultiJson.load(File.read(path || ENV['FISSION_RIAK_CONFIG'] || FISSION_RIAK_CONFIG))
+          Fission::Data::Hash.symbolize_keys(
+            MultiJson.load(File.read(path || ENV['FISSION_RIAK_CONFIG'] || FISSION_RIAK_CONFIG))
+          )
         end
 
         def inherited(klass)
