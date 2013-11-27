@@ -34,7 +34,7 @@ module Fission
               include ActiveModel::Validations
               include ActiveModel::Conversion
               extend ActiveModel::Naming
-
+              include Utils::NamingCompat
               include Utils::ValidationCompat
             end
 
@@ -53,7 +53,7 @@ module Fission
 
               # Support method for compat
               def table_name
-                self.name.underscore.pluralize
+                self.name.split('::').last.underscore.pluralize
               end
 
               # Return list of attribute names
