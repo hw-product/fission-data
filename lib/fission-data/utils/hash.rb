@@ -24,7 +24,7 @@ end
 
 module Fission
   module Data
-    module Hash
+    class Hash
       class << self
 
         # Copied out of carnivore. Can we share?
