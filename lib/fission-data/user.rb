@@ -27,15 +27,14 @@ module Fission
               identity.password = attributes[:password]
               identity.password_confirmation = attributes[:password_confirmation]
               identity.user = user
-              puts 'made it here!'
               if(identity.save)
-                puts 'oh, yay!'
                 user.reload
                 user
               else
                 raise 'creation failed!'
               end
             end
+            user
           else
             false
           end
