@@ -1,10 +1,21 @@
 require 'fission-data/version'
 
-autoload :Account, 'fission-data/account'
-autoload :Identity, 'fission-data/identity'
-autoload :Job, 'fission-data/job'
-autoload :Product, 'fission-data/product'
-autoload :Repository, 'fission-data/repository'
-autoload :User, 'fission-data/user'
+module Fission
+  module Data
 
-autoload :ModelBase, 'fission-data/model_base'
+    autoload :Account, 'fission-data/account'
+    autoload :Identity, 'fission-data/identity'
+    autoload :Job, 'fission-data/job'
+    autoload :Product, 'fission-data/product'
+    autoload :Repository, 'fission-data/repository'
+    autoload :User, 'fission-data/user'
+
+    autoload :ModelBase, 'fission-data/model_base'
+
+    module Utils
+
+      autoload :ValidationCompat, 'fission-data/utils/validation_compat'
+
+    end
+  end
+end

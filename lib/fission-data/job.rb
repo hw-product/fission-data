@@ -1,18 +1,24 @@
 require 'fission-data'
 
-class Job < ModelBase
-  bucket :jobs
+module Fission
+  module Data
 
-  value :task, :class => String
-  value :status, :class => String
-  value :last_update, :class => Time
-  value :percent_complete, :class => Fixnum
+    class Job < ModelBase
+      bucket :jobs
 
-  link :account, Account, :to => :jobs
+      value :task, :class => String
+      value :status, :class => String
+      value :last_update, :class => Time
+      value :percent_complete, :class => Fixnum
 
-  class << self
-    def display_attributes
-      [:key, :task, :status, :percent_complete, :last_update]
+      link :account, Account, :to => :jobs
+
+      class << self
+        def display_attributes
+          [:key, :task, :status, :percent_complete, :last_update]
+        end
+      end
     end
+
   end
 end

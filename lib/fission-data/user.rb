@@ -1,50 +1,56 @@
 require 'fission-data'
 
-class User < ModelBase
+module Fission
+  module Data
 
-  bucket :users
+    class User < ModelBase
 
-  value :username
-  value :name
-  value :updated_at, :class => Time
-  value :created_at, :class => Time
-  value :permissions, :class => Array
+      bucket :users
 
-  index :username, :unique => true
+      value :username
+      value :name
+      value :updated_at, :class => Time
+      value :created_at, :class => Time
+      value :permissions, :class => Array
 
-  link :base_account, Account, :to => :owner
-  links :accounts, Account, :to => :members
-  links :identities, Identity, :to => :user, :dependent => true
+      index :username, :unique => true
 
-  class << self
-    def display_attributes
-      [:username, :name]
-    end
-  end
+      link :base_account, Account, :to => :owner
+      links :accounts, Account, :to => :members
+      links :identities, Identity, :to => :user, :dependent => true
 
-  def create_account(name=nil)
-    act = Account.new.save
-    act.name = name || username
-    act.owner = self
-    act.save
-    unless(base_account)
-      self.base_account = act
-      unless(self.save)
-        Rails.logger.error self.errors.inspect
-        raise self.errors
+      class << self
+        def display_attributes
+          [:username, :name]
+        end
       end
+
+      def create_account(name=nil)
+        act = Account.new.save
+        act.name = name || username
+        act.owner = self
+        act.save
+        unless(base_account)
+          self.base_account = act
+          unless(self.save)
+            Rails.logger.error self.errors.inspect
+            raise self.errors
+          end
+        end
+        act
+      end
+
+      def to_s
+        username
+      end
+
+      def permitted?(*args)
+        args.detect do |permission|
+          permissions.include?(permission)
+        end
+      end
+
     end
-    act
-  end
 
-  def to_s
-    username
   end
-
-  def permitted?(*args)
-    args.detect do |permission|
-      permissions.include?(permission)
-    end
-  end
-
 end

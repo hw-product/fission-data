@@ -1,15 +1,21 @@
 require 'fission-data'
 
-class Repository < ModelBase
+module Fission
+  module Data
 
-  bucket :repositories
+    class Repository < ModelBase
 
-  value :url, :class => String
-  value :name, :class => String
-  value :oauth_token, :class => String
+      bucket :repositories
 
-  index :url, :unique => true
+      value :url, :class => String
+      value :name, :class => String
+      value :oauth_token, :class => String
 
-  link :owner, Account, :to => :repositories, :dependent => true
+      index :url, :unique => true
 
+      link :owner, Account, :to => :repositories, :dependent => true
+
+    end
+
+  end
 end
