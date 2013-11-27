@@ -45,6 +45,12 @@ module Fission
 
             class << self
 
+              # Override create method to auto generate key
+              def create(values={})
+                key = SecureRandom.uuid
+                super(key, values)
+              end
+
               # Support method for compat
               def table_name
                 self.name.underscore.pluralize
@@ -83,6 +89,15 @@ module Fission
                   @associations = {}.with_indifferent_access
                 end
                 @associations
+              end
+
+              # Provide find_by_* compatible methods
+              def method_missing(method, *args)
+                if(method.to_s.start_with?('find_by'))
+                  self.send(method.to_s.sub('find_', ''), *args)
+                else
+                  super
+                end
               end
 
               alias_method :risky_links, :links
@@ -137,14 +152,17 @@ module Fission
       # Ephemeral state
       attr_reader :run_state
 
-      def initialize(key=nil, values={})
+      def initialize(*args)
         @run_state = OpenStruct.new
+        key = args.first unless args.first.is_a?(Hash)
+        values = args.detect{|item| item.is_a?(Hash) } || {}
         key ||= SecureRandom.uuid
-        super
+        super(key, values)
       end
 
       # Automatic cleanup of links on remote models
       def after_delete
+        super
         self.class.associations.each do |attribute, info|
           if(info[:reverse])
             remote_association = info[:class].associations[info[:reverse]]
