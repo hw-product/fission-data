@@ -26,7 +26,10 @@ module Fission
         user.save
       end
 
-      validates_confirmation_of :password
+      if(defined?(::Rails))
+        validates_confirmation_of :password
+      end
+
       attr_accessor :password, :password_confirmation
 
       bucket :identities
