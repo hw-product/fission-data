@@ -13,7 +13,7 @@ module Fission
       index :name, :unique => true
 
       link :owner, User, :to => :base_account
-      link :owners, User, :to => :managed_accounts
+      links :owners, User, :to => :managed_accounts
       links :members, User, :to => :accounts
       links :jobs, Job, :to => :account
       links :repositories, Repository, :to => :owner

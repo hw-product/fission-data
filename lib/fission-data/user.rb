@@ -62,7 +62,7 @@ module Fission
       index :username, :unique => true
 
       link :base_account, Account, :to => :owner
-      link :managed_accounts, Account, :to => :owners
+      links :managed_accounts, Account, :to => :owners
       links :accounts, Account, :to => :members
       links :identities, Identity, :to => :user, :dependent => true
 
