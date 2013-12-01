@@ -62,6 +62,7 @@ module Fission
       index :username, :unique => true
 
       link :base_account, Account, :to => :owner
+      link :managed_accounts, Account, :to => :owners
       links :accounts, Account, :to => :members
       links :identities, Identity, :to => :user, :dependent => true
 
@@ -81,7 +82,6 @@ module Fission
           if(act.save)
             self.base_account = act
             unless(self.save)
-              Rails.logger.error self.errors.inspect
               raise self.errors
             end
           else
