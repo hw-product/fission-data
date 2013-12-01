@@ -161,6 +161,36 @@ module Fission
         super(key, values)
       end
 
+      #  Automatic link creation after create
+      def after_create
+        super
+        self.class.associations.each do |attribute, info|
+          if(info[:reverse])
+            remote_association = info[:class].associations[info[:reverse]]
+            if(remote_association[:style] == :many)
+              remote_args = ["add_#{info[:reverse]}", self]
+            else
+              remote_args = ["#{info[:reverse]}=", self]
+            end
+            case info[:style]
+            when :many
+              self.send(attribute).each do |instance|
+                if(instance)
+                  instance.send(*remote_args)
+                  instance.save
+                end
+              end
+            when :one
+              instance = self.send(attribute)
+              if(instance)
+                instance.send(*remote_args)
+                instance.save
+              end
+            end
+          end
+        end
+      end
+
       # Automatic cleanup of links on remote models
       def after_delete
         super
