@@ -9,6 +9,7 @@ module Fission
       bucket :accounts
 
       value :name
+      value :stripe_id
 
       index :name, :unique => true
 
