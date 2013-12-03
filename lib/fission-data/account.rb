@@ -10,6 +10,8 @@ module Fission
 
       value :name
       value :stripe_id
+      value :subscription_id
+      value :subscription_expired
 
       index :name, :unique => true
 
