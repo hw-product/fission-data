@@ -17,6 +17,14 @@ module Fission
 
       link :owner, Account, :to => :repositories, :dependent => true
 
+      class << self
+
+        # List displayable attributes
+        def display_attributes
+          [:name, :url, :private]
+        end
+      end
+
     end
 
   end
