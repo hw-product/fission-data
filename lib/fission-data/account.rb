@@ -8,12 +8,14 @@ module Fission
 
       bucket :accounts
 
-      value :name
-      value :stripe_id
-      value :subscription_id
-      value :subscription_expired
+      value :name, :class => String
+      value :source, :class => String
+      value :name_source, :class => String
+      value :stripe_id, :class => String
+      value :subscription_id, :class => String
+      value :subscription_expires, :class => DateTime
 
-      index :name, :unique => true
+      index :name_source, :unique => true
 
       link :owner, User, :to => :base_account
       links :owners, User, :to => :managed_accounts
@@ -24,11 +26,18 @@ module Fission
 
       class << self
         def display_attributes
-          [:name, :owner]
+          [:name, :source, :owner]
         end
 
         def restrict(user)
           ([user.base_account] + user.accounts).compact.uniq
+        end
+      end
+
+      def before_save
+        super
+        unless(name_source)
+          name_source = "#{name}_#{source}"
         end
       end
 
