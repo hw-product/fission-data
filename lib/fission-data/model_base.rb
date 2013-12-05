@@ -226,7 +226,7 @@ module Fission
             end
           end
         end
-        dirty_init
+        init_dirty
       end
 
       # Automatic cleanup of links on remote models
