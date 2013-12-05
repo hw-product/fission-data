@@ -71,6 +71,12 @@ module Fission
         create_account
       end
 
+      # Return the marked default identity. For now we only accept
+      # github so it's super duper dumb
+      def default_identity
+        identities.detect{|i| (i.provider || 'wat').to_sym == :github}
+      end
+
       # name:: Optional account name (probably not needed until custom accounts can be created)
       # Create an account and attach it to this user as the base account
       def create_account(name=nil)
