@@ -160,12 +160,13 @@ module Fission
         key = args.detect{|item| !item.is_a?(::Hash) } || SecureRandom.uuid
         values = args.detect{|item| item.is_a?(::Hash) } || {}
         super(key, values)
+        init_dirty
       end
 
       # Initialize dirty data structure
       def init_dirty
         dirty_base[:values] = @values.dup
-        dirty_base[:links] = @riak_object.links.dup
+        dirty_base[:links] = @riak_object ? @riak_object.links.dup : Set.new
         self
       end
 
@@ -209,8 +210,9 @@ module Fission
       def after_save
         super
         dirty_links.each do |riak_link|
-          attribute = riak_link.tag.to_sym
+          attribute = riak_link.tag.to_s
           info = self.class.associations[attribute]
+          next unless info
           if(info[:reverse])
             action = riak_object.links.include?(riak_link) ? :add : :remove
             instance = info[:class][riak_link.key]
