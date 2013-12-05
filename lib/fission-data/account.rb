@@ -15,6 +15,7 @@ module Fission
       value :subscription_id, :class => String
       value :subscription_expires, :class => DateTime
 
+      index :name
       index :name_source, :unique => true
 
       link :owner, User, :to => :base_account
