@@ -152,43 +152,81 @@ module Fission
       # customizations and overrides
 
       # Ephemeral state
-      attr_reader :run_state
+      attr_reader :run_state, :dirty_base
 
       def initialize(*args)
+        @dirty_base = {}
         @run_state = OpenStruct.new
         key = args.detect{|item| !item.is_a?(::Hash) } || SecureRandom.uuid
         values = args.detect{|item| item.is_a?(::Hash) } || {}
         super(key, values)
       end
 
-      #  Automatic link creation after create
-      def after_create
+      # Initialize dirty data structure
+      def init_dirty
+        dirty_base[:values] = @values.dup
+        dirty_base[:links] = @riak_object.links.dup
+        self
+      end
+
+      # attribute:: Optional attribute name for explicity check
+      # Check if attribute data is dirty
+      def dirty?(attribute=nil)
+        if(attribute)
+          dirty_values.include?(attribute.to_sym)
+        else
+          !!dirty.values.detect do |val|
+            !val.empty?
+          end
+        end
+      end
+
+      # Return hash of dirty attribute keys and links diff
+      def dirty
+        {
+          :values => dirty_values,
+          :links => dirty_links
+        }
+      end
+
+      # Return names of dirty attributes
+      def dirty_values
+        values.find_all{|k,v| dirty_base[:values][k] != v }.map(&:first).map(&:to_sym)
+      end
+
+      # Return list of dirty links
+      def dirty_links
+        dirty_base[:links].difference(@riak_object.links)
+      end
+
+      # Init dirty data structure after loading
+      def after_load
         super
-        self.class.associations.each do |attribute, info|
+        init_dirty
+      end
+
+      #  Automatic link updates after save
+      def after_save
+        super
+        dirty_links.each do |riak_link|
+          attribute = riak_link.tag.to_sym
+          info = self.class.associations[attribute]
           if(info[:reverse])
-            remote_association = info[:class].associations[info[:reverse]]
-            if(remote_association[:style] == :many)
-              remote_args = ["add_#{info[:reverse]}", self]
-            else
-              remote_args = ["#{info[:reverse]}=", self]
-            end
-            case info[:style]
-            when :many
-              self.send(attribute).each do |instance|
-                if(instance)
-                  instance.send(*remote_args)
-                  instance.save
-                end
+            action = riak_object.links.include?(riak_link) ? :add : :remove
+            instance = info[:class][riak_link.key]
+            if(instance)
+              remote_association = info[:class].associations[info[:reverse]]
+              if(remote_association[:style] == :many)
+                remote_args = ["#{action}_#{info[:reverse]}", self]
+              else
+                remote_args = ["#{info[:reverse]}=", action == :add ? self : nil]
               end
-            when :one
-              instance = self.send(attribute)
-              if(instance)
-                instance.send(*remote_args)
-                instance.save
-              end
+              instance.send(*remote_args)
+              instance.save
             end
           end
         end
+        dirty_init
       end
 
       # Automatic cleanup of links on remote models
