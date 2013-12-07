@@ -151,6 +151,12 @@ module Fission
                 end
               end
 
+              # args:: Strings
+              # Returns key
+              def source_key(*args)
+                args.compact.join('_')
+              end
+
             end
           end
         end
