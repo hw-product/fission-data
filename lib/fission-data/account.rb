@@ -31,13 +31,6 @@ module Fission
 
         # name:: Account name
         # source:: Source of account
-        # Returns formatted string used for `name_source`
-        def source_key(name, source)
-          [source, name].compact.join('_')
-        end
-
-        # name:: Account name
-        # source:: Source of account
         # Find the given account
         def lookup(name, source)
           find_by_name_source(source_key(name, source))
