@@ -77,6 +77,15 @@ module Fission
         identities.detect{|i| (i.provider || 'wat').to_sym == :github}
       end
 
+      # provider:: Provider symbol (:github)
+      # Return oauth token for given provider
+      def token_for(provider)
+        identities.detect do |i|
+          i.provider && i.provider.to_sym == provider.to_sym
+        end.credentials['token']
+      end
+
+
       # name:: Optional account name (probably not needed until custom accounts can be created)
       # Create an account and attach it to this user as the base account
       def create_account(name=nil)
