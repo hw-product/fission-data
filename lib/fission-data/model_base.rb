@@ -68,6 +68,13 @@ module Fission
                 []
               end
 
+              # Display links (can be `nil` or `false` to turn off,
+              # `true` to enable
+              # NOTE: Link display require defined routes
+              def display_links
+                true
+              end
+
               # Return instance with given key
               def find(key)
                 self[key]
@@ -197,7 +204,12 @@ module Fission
 
       # Return list of dirty links
       def dirty_links
-        dirty_base[:links].difference(@riak_object.links)
+        res = dirty_base[:links].difference(@riak_object.links)
+        if(res.empty?)
+          @riak_object.links.difference(dirty_base[:links])
+        else
+          res
+        end
       end
 
       # Init dirty data structure after loading
@@ -211,9 +223,9 @@ module Fission
         super
         dirty_links.each do |riak_link|
           attribute = riak_link.tag.to_s
+          next if attribute == 'up' # new instance link
           info = self.class.associations[attribute]
-          next unless info
-          if(info[:reverse])
+          if(info && info[:reverse])
             action = riak_object.links.include?(riak_link) ? :add : :remove
             instance = info[:class][riak_link.key]
             if(instance)
@@ -225,6 +237,10 @@ module Fission
               end
               instance.send(*remote_args)
               instance.save
+            end
+          else
+            if(defined?(Rails))
+              Rails.logger.warn "Failed to locate assocation for given link: #{attribute}. Current assocation structure: #{self.class.associations}"
             end
           end
         end
@@ -291,6 +307,17 @@ module Fission
           raise unless new?
           ''
         end
+      end
+
+      # Attempt nice string output
+      def to_s
+        name || id
+      end
+
+      # user:: Fission::Data::User instance
+      # Return links allowed viewable to given user
+      def display_links(user)
+        self.class.associations.keys
       end
 
     end
