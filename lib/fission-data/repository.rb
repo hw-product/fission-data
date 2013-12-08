@@ -12,6 +12,7 @@ module Fission
       value :source, :class => String
       value :name_source, :class => String
       value :clone_url, :class => String
+      value :metadata, :class => Hash, :default => {}
       value :private
 
       index :name
@@ -39,6 +40,35 @@ module Fission
       # Return short name if long name
       def short_name
         name.split('/').last
+      end
+
+      # args:: keys to walk. Last arg is value
+      # Set value into metadata hash
+      def set_metadata(*args)
+        unless(self.metadata)
+          self.metadata = {}
+        end
+        val = args.pop
+        last_key = args.pop
+        base = args.inject(self.metadata) do |memo, key|
+          key = key.to_s
+          unless(memo[key])
+            memo[key] = {}
+          end
+          memo[key]
+        end
+        base[last_key] = val
+      end
+
+      # args:: keys to walk
+      # Return value at end of path
+      def get_metadata(*args)
+        if(self.metadata)
+          args.inject(self.metadata) do |memo, key|
+            key = key.to_s
+            memo[key] ? memo[key] : break
+          end
+        end
       end
 
     end
