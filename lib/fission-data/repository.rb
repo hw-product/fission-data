@@ -35,6 +35,13 @@ module Fission
         def display_attributes
           [:name, :url, :private]
         end
+
+        def restrict(user)
+          repos = user.managed_accounts.map do |acct|
+            acct.repositories
+          end + user.base_account.repositories
+          repos.flatten.compact
+        end
       end
 
       # Return short name if long name

@@ -89,7 +89,9 @@ module Fission
               # user:: User instance
               # Return limited set accessible to user
               def restrict(user)
-                Rails.logger.warn '!!! No custom user restriction provided. Returning nothing!'
+                if(defined?(Rails))
+                  Rails.logger.warn '!!! No custom user restriction provided. Returning nothing!'
+                end
                 []
               end
 
