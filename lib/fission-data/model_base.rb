@@ -89,7 +89,8 @@ module Fission
               # user:: User instance
               # Return limited set accessible to user
               def restrict(user)
-                all
+                Rails.logger.warn '!!! No custom user restriction provided. Returning nothing!'
+                []
               end
 
               # Return assocations of class
