@@ -44,7 +44,7 @@ module Fission
         # user:: Fission::Data::User instance
         # Only show user accounts they own
         def restrict(user)
-          ([user.base_account] + user.accounts + user.managed_accounts).compact.uniq
+          ([user.base_account] + user.managed_accounts).compact.uniq
         end
 
       end
