@@ -27,6 +27,9 @@ module Fission
     class Hash
       class << self
 
+        # base:: Hash type instance
+        # keys:: Keys to walk into hash
+        # Return value at and of key path
         def walk_get(base, *keys)
           keys.inject(base) do |memo, key|
             if(memo.has_key?(valid_key = key.to_s) || memo.has_key?(valid_key = key.to_sym))
@@ -37,6 +40,11 @@ module Fission
           end
         end
 
+        # base:: Hash type instance
+        # keys_and_val:: Keys to walk into hash ending with value to set
+        # Walk into hash and set provided value
+        # NOTE: If invalid type is discovered during walk, a
+        # `TypeError` will be raised
         def walk_set(base, *keys_and_val)
           args = keys_and_val.dup
           val = args.pop
@@ -44,7 +52,7 @@ module Fission
           set_point = args.inject(base) do |memo, key|
             valid_key = [key.to_sym, key.to_s].detect{|k| memo.has_key?(k)}
             if(valid_key)
-              if(memo[valid_key].is_a?(Hash))
+              if(memo[valid_key].is_a?(::Hash))
                 memo[valid_key]
               else
                 raise TypeError.new("Walked to invalid type. Must be hash type for setting. Found #{memo[valid_key].class}")
