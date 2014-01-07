@@ -118,16 +118,30 @@ module Fission
         end
       end
 
+      # keys_and_value:: keys to walk. Last arg is value
+      # Set value into session_data hash
       def set_session(*keys_and_value)
         unless(self.session_data)
           self.session_data = Fission::Data::Hash.new
         end
-        Fission::Data::Hash.walk_set(self.session_data, *keys_and_value)
+        result = Fission::Data::Hash.walk_set(self.session_data, *keys_and_value)
+        self.save
+        result
       end
 
+      # keys:: keys to walk
+      # Return value at end of path
       def session(*keys)
         if(self.session_data)
           Fission::Data::Hash.walk_get(self.session_data, *keys)
+        end
+      end
+
+      # Reset the `session_data`
+      def clear_session!
+        if(self.session_data && !self.session_data.empty?)
+          self.session_data = Fission::Data::Hash.new
+          self.save
         end
       end
 
