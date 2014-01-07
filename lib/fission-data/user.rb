@@ -58,6 +58,7 @@ module Fission
       value :updated_at, :class => Time
       value :created_at, :class => Time
       value :permissions, :class => Array
+      value :session_data, :class => Fission::Data::Hash, :default => {}.with_indifferent_access
 
       index :username, :unique => true
 
@@ -114,6 +115,23 @@ module Fission
       def permitted?(*args)
         args.detect do |permission|
           permissions.include?(permission)
+        end
+      end
+
+      def set_session(*keys_and_value)
+        unless(self.session_data)
+          self.session_data = Fission::Data::Hash.new
+        end
+        #TODO: Make this walk
+        self.session_data[keys_and_value.first] = keys_and_value.last
+      end
+
+      def session(*keys)
+        if(self.session_data)
+          keys.inject(self.session_data) do |memo, key|
+            key = key.to_s
+            memo[key] ? memo[key] : break
+          end
         end
       end
 
