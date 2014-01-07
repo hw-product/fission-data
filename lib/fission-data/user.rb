@@ -122,16 +122,12 @@ module Fission
         unless(self.session_data)
           self.session_data = Fission::Data::Hash.new
         end
-        #TODO: Make this walk
-        self.session_data[keys_and_value.first] = keys_and_value.last
+        Fission::Data::Hash.walk_set(self.session_data, *keys_and_value)
       end
 
       def session(*keys)
         if(self.session_data)
-          keys.inject(self.session_data) do |memo, key|
-            key = key.to_s
-            memo[key] ? memo[key] : break
-          end
+          Fission::Data::Hash.walk_get(self.session_data, *keys)
         end
       end
 

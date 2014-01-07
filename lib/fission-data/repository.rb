@@ -53,28 +53,16 @@ module Fission
       # Set value into metadata hash
       def set_metadata(*args)
         unless(self.metadata)
-          self.metadata = {}
+          self.metadata = Fission::Data::Hash.new
         end
-        val = args.pop
-        last_key = args.pop
-        base = args.inject(self.metadata) do |memo, key|
-          key = key.to_s
-          unless(memo[key])
-            memo[key] = {}
-          end
-          memo[key]
-        end
-        base[last_key] = val
+        Fission::Data::Hash.walk_set(self.metadata, *args)
       end
 
       # args:: keys to walk
       # Return value at end of path
       def get_metadata(*args)
         if(self.metadata)
-          args.inject(self.metadata) do |memo, key|
-            key = key.to_s
-            memo[key] ? memo[key] : break
-          end
+          Fission::Data::Hash.walk_get(self.metadata, *args)
         end
       end
 
