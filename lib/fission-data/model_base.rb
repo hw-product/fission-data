@@ -23,8 +23,12 @@ module Fission
         end
 
         def connection_arguments(path=nil)
+          path = [path, ENV['FISSION_RIAK_CONFIG'] || FISSION_RIAK_CONFIG].detect do |test_path|
+            File.exists?(test_path.to_s)
+          end
+          raise 'Failed to discover valid path for riak connection configuration!' unless path
           Fission::Data::Hash.symbolize_hash(
-            MultiJson.load(File.read(path || ENV['FISSION_RIAK_CONFIG'] || FISSION_RIAK_CONFIG))
+            MultiJson.load(File.read(path))
           )
         end
 
