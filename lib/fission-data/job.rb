@@ -6,14 +6,21 @@ module Fission
     class Job < ModelBase
       bucket :jobs
 
-      value :status, :class => String
       value :last_update, :class => Time
-      value :percent_complete, :class => Fixnum
       value :payload, :class => Hash
+      value :message_id, :class => String
 
+      index :message_id, :unique => true
       link :account, Account, :to => :jobs
 
       class << self
+
+        def restrict(user)
+          [user.base_account, user.managed_accounts].flatten.compact.map do |act|
+            act.try(:jobs) || []
+          end.inject(&:+)
+        end
+
         def display_attributes
           [:key, :task, :status, :percent_complete, :last_update]
         end
@@ -24,6 +31,12 @@ module Fission
         self.last_update = Time.now
       end
 
+    end
+
+    def status
+    end
+
+    def percent_complete
     end
 
   end
