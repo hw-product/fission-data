@@ -161,7 +161,7 @@ module Fission
               # args:: Strings
               # Returns key
               def source_key(*args)
-                args.compact.join('_')
+                args.compact.map(&:to_s).join('_')
               end
 
             end
