@@ -42,6 +42,14 @@ module Fission
           end + user.base_account.repositories
           repos.flatten.compact
         end
+
+        # URL based lookup helper
+        def find_by_matching_url(url)
+          [url, url.sub('.git', ''), "#{url.sub('.git', '')}.git"].uniq.map do |lookup_url|
+            find_by_clone_url(lookup_url) || find_by_url(lookup_url)
+          end.compact.first
+        end
+
       end
 
       # Return short name if long name
