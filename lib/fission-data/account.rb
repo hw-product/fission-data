@@ -50,14 +50,12 @@ module Fission
         # NOTE: Returned account will be an unsaved instance
         def remote_lookup(name, source)
           customer = find_stripe_customer(source_key(name, source))
-          if(customer)
-            account = self.new(
-              :name => name,
-              :source => source.to_s
-            )
-            account.set_payment_information
-            account
-          end
+          account = self.new(
+            :name => name,
+            :source => source.to_s
+          )
+          account.set_payment_information if customer
+          account
         end
 
         # Attributes to display by default
@@ -75,13 +73,16 @@ module Fission
         def find_stripe_customer(account_name)
           if(defined?(Stripe))
             unless(@retrieved)
-              retrieved = []
-              until((customers = Stripe::Customer.all(:offset => retrieved.size)).empty?)
-                retrieved += customers
+              @retrieved = Stripe::Customer.all.to_a
+# TODO: looping gets us a weird threading error
+=begin
+              until((customers = Stripe::Customer.all(:offset => retrieved.size)).count < 1)
+                @retrieved += customers.to_a
               end
+=end
             end
             @retrieved.detect do |customer|
-              customer.metadata.fission_account_name == account_name
+              customer.metadata[:fission_account_name] == account_name
             end
           end
         end
@@ -138,7 +139,7 @@ module Fission
           self.stripe_id = customer.id
           if(customer.subscription)
             self.subscription_id = customer.subscription.id
-            self.subscription_expires = Time.at(customer.subscription.current_period_end).to_datatime
+            self.subscription_expires = Time.at(customer.subscription.current_period_end).to_datetime
           end
           true
         else
