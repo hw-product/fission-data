@@ -14,6 +14,7 @@ module Fission
       value :name_source, :class => String
       value :stripe_id, :class => String
       value :subscription_id, :class => String
+      value :subscription_plan_id, :class => String
       value :subscription_expires, :class => DateTime
 
       index :name
@@ -139,6 +140,7 @@ module Fission
           self.stripe_id = customer.id
           if(customer.subscription)
             self.subscription_id = customer.subscription.id
+            self.subscription_plan_id = customer.subscription.plan.id
             self.subscription_expires = Time.at(customer.subscription.current_period_end).to_datetime
           end
           true
