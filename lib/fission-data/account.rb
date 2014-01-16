@@ -72,18 +72,20 @@ module Fission
 
         # Detect existing stripe customer instance for this account
         def find_stripe_customer(account_name)
-          if(defined?(Stripe))
-            unless(@retrieved)
-              @retrieved = Stripe::Customer.all.to_a
-# TODO: looping gets us a weird threading error
+          if(account_name)
+            if(defined?(Stripe))
+              unless(@retrieved)
+                @retrieved = Stripe::Customer.all.to_a
+                # TODO: looping gets us a weird threading error
 =begin
-              until((customers = Stripe::Customer.all(:offset => retrieved.size)).count < 1)
-                @retrieved += customers.to_a
-              end
+                   until((customers = Stripe::Customer.all(:offset => retrieved.size)).count < 1)
+                     @retrieved += customers.to_a
+                   end
 =end
-            end
-            @retrieved.detect do |customer|
-              customer.metadata[:fission_account_name] == account_name
+              end
+              @retrieved.detect do |customer|
+                customer.metadata[:fission_account_name] == account_name
+              end
             end
           end
         end
@@ -155,7 +157,8 @@ module Fission
           if(self.stripe_id)
             Stripe::Customer.retrieve(self.stripe_id)
           else
-            self.class.find_stripe_customer(self.name_source)
+            ns = self.name_source || self.class.source_key(name, source)
+            self.class.find_stripe_customer(ns)
           end
         end
       end
