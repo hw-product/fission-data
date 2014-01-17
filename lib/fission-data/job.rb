@@ -26,11 +26,11 @@ module Fission
         end
       end
 
-      def before_save
-        super
-        self.last_update = Time.now
-      end
+    end
 
+    def before_save
+      super
+      self.last_update = Time.now
     end
 
     def status
