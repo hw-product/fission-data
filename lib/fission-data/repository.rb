@@ -52,6 +52,11 @@ module Fission
 
       end
 
+      def before_save
+        super
+        self.name_source = self.class.source_key(name, source)
+      end
+
       # Return short name if long name
       def short_name
         name.split('/').last
