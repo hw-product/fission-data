@@ -15,7 +15,7 @@ module Fission
 
       class << self
 
-        def connect!(args={})
+        def connect!(args=Hash.new)
           if(args.empty? || args[:file])
             args = connection_arguments(args[:file])
           end
@@ -52,7 +52,7 @@ module Fission
             class << self
 
               # Override create method to auto generate key
-              def create(values={})
+              def create(values=Hash.new)
                 key = SecureRandom.uuid
                 super(key, values)
               end
@@ -102,7 +102,7 @@ module Fission
               # Return assocations of class
               def associations
                 unless(@associations)
-                  @associations = {}.with_indifferent_access
+                  @associations = Hash.new
                 end
                 @associations
               end
@@ -118,13 +118,13 @@ module Fission
 
               alias_method :risky_links, :links
 
-              def links(name, klass=nil, args={})
-                associations[name] = {
+              def links(name, klass=nil, args=Hash.new)
+                associations[name] = Hash[
                   :class => klass,
                   :style => :many,
                   :reverse => args[:to],
                   :dependent => args[:dependent]
-                }
+                ]
                 risky_links(name)
                 if(klass)
                   class_eval do
@@ -140,13 +140,13 @@ module Fission
 
               alias_method :risky_link, :link
 
-              def link(name, klass=nil, args={})
-                associations[name] = {
+              def link(name, klass=nil, args=Hash.new)
+                associations[name] = Hash[
                   :class => klass,
                   :style => :one,
                   :reverse => args[:to],
                   :dependent => args[:dependent]
-                }
+                ]
                 risky_link(name)
                 if(klass)
                   class_eval do
@@ -175,10 +175,10 @@ module Fission
       attr_reader :run_state, :dirty_base
 
       def initialize(*args)
-        @dirty_base = {}
+        @dirty_base = Hash.new
         @run_state = OpenStruct.new
         key = args.detect{|item| !item.is_a?(::Hash) } || SecureRandom.uuid
-        values = args.detect{|item| item.is_a?(::Hash) } || {}
+        values = args.detect{|item| item.is_a?(::Hash) } || Hash.new
         super(key, values)
         init_dirty
       end
@@ -204,10 +204,10 @@ module Fission
 
       # Return hash of dirty attribute keys and links diff
       def dirty
-        {
+        Hash[
           :values => dirty_values,
           :links => dirty_links
-        }
+        ]
       end
 
       # Return names of dirty attributes

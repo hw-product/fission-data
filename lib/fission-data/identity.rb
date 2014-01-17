@@ -38,9 +38,9 @@ module Fission
       value :uid, :class => String
       value :provider, :class => String
       value :email, :class => String
-      value :credentials, :class => Fission::Data::Hash, :default => {}.with_indifferent_access
-      value :extras, :class => Fission::Data::Hash, :default => {}.with_indifferent_access
-      value :infos, :class => Fission::Data::Hash, :default => {}.with_indifferent_access
+      value :credentials, :class => Fission::Data::Hash, :default => Hash.new
+      value :extras, :class => Fission::Data::Hash, :default => Hash.new
+      value :infos, :class => Fission::Data::Hash, :default => Hash.new
       value :password_digest, :class => String
 
       link :user, User, :to => :identities, :dependent => true

@@ -33,15 +33,23 @@ module Fission
       end
 
       def task
-        'packaging'
+        Fission::Data::Hash.walk_get(self.payload, :data, :router, :action) || self.payload['job']
       end
 
       def status
-        'in progress'
+        if(self.payload['error'])
+          :error
+        else
+          self.payload['complete'].include?(self.payload['job']) ? :complete : :in_progress
+        end
       end
 
       def percent_complete
-        75
+        total = [
+          done = Hash.walk_get(self.payload, :data, :complete).find_all{|x|!x.include?(':')},
+          Hash.walk_get(self.payload, :data, :router, :route)
+        ].flatten.compact.count
+        done / total
       end
 
     end

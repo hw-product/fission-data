@@ -12,7 +12,7 @@ module Fission
       value :source, :class => String
       value :name_source, :class => String
       value :clone_url, :class => String
-      value :metadata, :class => Hash, :default => {}
+      value :metadata, :class => Hash, :default => Hash.new
       value :private
 
       index :name
