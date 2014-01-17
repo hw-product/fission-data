@@ -10,5 +10,6 @@ Gem::Specification.new do |s|
   s.description = 'Fission Core'
   s.require_path = 'lib'
   s.add_dependency 'risky' # TODO: add version peg
+  s.add_dependency 'hashie'
   s.files = Dir['**/*']
 end
