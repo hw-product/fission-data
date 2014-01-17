@@ -15,7 +15,7 @@ module Fission
       value :stripe_id, :class => String
       value :subscription_id, :class => String
       value :subscription_plan_id, :class => String
-      value :subscription_expires, :class => DateTime
+      value :subscription_expires, :class => Fixnum
 
       index :name
       index :name_source, :unique => true
@@ -111,13 +111,13 @@ module Fission
       # Return if subscription is expired
       def expired?
         if(subscription_expires)
-          subscription_expires < Time.now
+          subscription_expires < Time.now.to_i
         end
       end
 
       # Return if account is active (valid subscription)
       def active?
-        subscribed? && !expired
+        subscribed? && !expired?
       end
 
       # user:: Fission::Data::Instance
@@ -143,7 +143,7 @@ module Fission
           if(customer.subscription)
             self.subscription_id = customer.subscription.id
             self.subscription_plan_id = customer.subscription.plan.id
-            self.subscription_expires = Time.at(customer.subscription.current_period_end).to_datetime
+            self.subscription_expires = customer.subscription.current_period_end
           end
           true
         else
