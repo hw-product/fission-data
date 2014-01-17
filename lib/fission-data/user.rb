@@ -58,15 +58,17 @@ module Fission
       value :updated_at, :class => Time
       value :created_at, :class => Time
       value :permissions, :class => Array
-      value :session_data, :class => Fission::Data::Hash, :default => {}.with_indifferent_access
+      value :session_data, :class => Hash, :default => Hash
 
       index :username, :unique => true
 
       link :base_account, Account, :to => :owner
+      link :active_session, Session, :to => :user
       links :managed_accounts, Account, :to => :owners
       links :accounts, Account, :to => :members
       links :identities, Identity, :to => :user, :dependent => true
 
+      # Ensure our account wrapper is created
       def after_create
         super
         create_account
@@ -118,31 +120,23 @@ module Fission
         end
       end
 
-      # keys_and_value:: keys to walk. Last arg is value
-      # Set value into session_data hash
-      def set_session(*keys_and_value)
-        unless(self.session_data)
-          self.session_data = Fission::Data::Hash.new
+      # session access wrapper
+      def session
+        unless(self.active_session)
+          self.active_session = Session.create
+          self.save
         end
-        result = Fission::Data::Hash.walk_set(self.session_data, *keys_and_value)
-        self.save
-        result
-      end
-
-      # keys:: keys to walk
-      # Return value at end of path
-      def session(*keys)
-        if(self.session_data)
-          Fission::Data::Hash.walk_get(self.session_data, *keys)
-        end
+        self.active_session
       end
 
       # Reset the `session_data`
       def clear_session!
-        if(self.session_data && !self.session_data.empty?)
-          self.session_data = Fission::Data::Hash.new
-          self.save
+        current = self.active_session
+        if(current)
+          current.delete
         end
+        self.active_session = Session.create
+        self.save
       end
 
     end
