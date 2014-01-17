@@ -46,10 +46,10 @@ module Fission
 
       def percent_complete
         total = [
-          done = Hash.walk_get(self.payload, :data, :complete).find_all{|x|!x.include?(':')},
+          done = Hash.walk_get(self.payload, :complete).find_all{|x|!x.include?(':')},
           Hash.walk_get(self.payload, :data, :router, :route)
-        ].flatten.compact.count
-        done / total
+        ].flatten.compact
+        ((done.count / total.count.to_f) * 100).to_i
       end
 
     end
