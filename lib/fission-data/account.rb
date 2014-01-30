@@ -126,6 +126,14 @@ module Fission
         user == owner || owners.include?(user)
       end
 
+      # Return a valid github access token of an owner
+      def github_token
+        user = self.owner || self.owners.first
+        user.identities.detect do |identity|
+          identity.provider.to_sym == :github
+        end.credentials['token']
+      end
+
       # Restrict link display based on user status
       def display_links(user)
         if(owner?(user))
