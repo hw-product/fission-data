@@ -9,6 +9,7 @@ module Fission
     autoload :Product, 'fission-data/product'
     autoload :Repository, 'fission-data/repository'
     autoload :Session, 'fission-data/session'
+    autoload :Token, 'fission-data/token'
     autoload :User, 'fission-data/user'
 
     autoload :ModelBase, 'fission-data/model_base'

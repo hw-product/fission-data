@@ -3,7 +3,6 @@ require 'fission-data'
 module Fission
   module Data
 
-
     class Account < ModelBase
 
       bucket :accounts
@@ -26,7 +25,7 @@ module Fission
       links :jobs, Job, :to => :account
       links :repositories, Repository, :to => :owner
       links :products, Product, :to => :enabled_accounts
-
+      links :tokens, Token, :to => :account
 
       class << self
 
@@ -169,6 +168,13 @@ module Fission
             self.class.find_stripe_customer(ns)
           end
         end
+      end
+
+      def create_token
+        token = Token.new
+        token.account = self
+        token.save
+        token
       end
 
     end
