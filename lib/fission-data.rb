@@ -1,18 +1,13 @@
 require 'fission-data/version'
 
+if(ENV['FISSION_DATA_TYPE'])
+  require "fission/#{ENV['FISSION_DATA_TYPE'}"
+end
+
 module Fission
   module Data
 
-    autoload :Account, 'fission-data/account'
-    autoload :Identity, 'fission-data/identity'
-    autoload :Job, 'fission-data/job'
-    autoload :Product, 'fission-data/product'
-    autoload :Repository, 'fission-data/repository'
-    autoload :Session, 'fission-data/session'
-    autoload :Token, 'fission-data/token'
-    autoload :User, 'fission-data/user'
-
-    autoload :ModelBase, 'fission-data/model_base'
+    autoload :Error, 'fission-data/errors'
 
     module Utils
 
