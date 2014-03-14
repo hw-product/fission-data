@@ -80,6 +80,11 @@ module Fission
         identities.detect{|i| (i.provider || 'wat').to_sym == :github}
       end
 
+      # Helper method to make conversion easier
+      def email
+        default_identity.infos['email']
+      end
+
       # provider:: Provider symbol (:github)
       # Return oauth token for given provider
       def token_for(provider)
