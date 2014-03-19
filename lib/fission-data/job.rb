@@ -25,6 +25,10 @@ module Fission
           [:key, :task, :status, :percent_complete, :last_update]
         end
 
+        def sorter(i)
+          i.sort_by!(&:last_update).reverse
+        end
+
       end
 
       def before_save

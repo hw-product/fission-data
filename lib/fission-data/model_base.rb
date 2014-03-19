@@ -324,7 +324,7 @@ module Fission
 
       # Attempt nice string output
       def to_s
-        respond_to?(name) && name ? name : id
+        respond_to?(:name) && name ? name : id
       end
 
       # user:: Fission::Data::User instance
