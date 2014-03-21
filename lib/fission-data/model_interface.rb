@@ -8,6 +8,14 @@ module Fission
         autoload klass, path
       end
 
+      class << self
+
+        def included(klass)
+          klass.send(:include, InstanceMethods)
+          klass.send(:extend, ClassMethods)
+        end
+
+      end
     end
   end
 end

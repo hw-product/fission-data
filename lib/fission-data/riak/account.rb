@@ -31,6 +31,10 @@ module Fission
 
         class << self
 
+          def restrict(user)
+            ([user.base_account] + [user.managed_accounts]).flatten.compact.uniq.sort_by(&:name)
+          end
+
           # name:: Account name
           # source:: Source of account
           # args:: options

@@ -50,8 +50,6 @@ module Fission
 
           def included(klass)
             klass.class_eval do
-              include Fission::Data::Sql::InstanceMethods
-              extend Fission::Data::Sql::ClassMethods
               include InstanceMethods
               extend ClassMethods
             end

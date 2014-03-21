@@ -7,8 +7,6 @@ module Fission
 
         include Fission::Data::ModelInterface::Identity
 
-        SALT = 'fission01'
-
         def before_create
           super
           self.provider_identity = [provider, uid].compact.join('_')

@@ -81,14 +81,12 @@ module Fission
 
           def included(klass)
             klass.class_eval do
-              include Fission::Data::Sql::InstanceMethods
-              extend Fission::Data::Sql::ClassMethods
               include InstanceMethods
               extend ClassMethods
 
-              SALT = 'fission01'
               attr_accessor :password, :password_confirmation
             end
+            klass.send(:const_set, :SALT, 'fission01')
           end
 
         end

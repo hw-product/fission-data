@@ -9,6 +9,8 @@ module Fission
     module Riak
       class ModelBase < Risky
 
+        include Fission::Data::ModelInterface
+
         # Execute these things on inclusion
 
         class << self

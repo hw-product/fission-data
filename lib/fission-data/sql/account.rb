@@ -6,7 +6,7 @@ module Fission
 
         include Fission::Data::ModelInterface::Account
 
-        many_to_one :owner, :class => Sql::User
+        many_to_one :owner, :class => Sql::User, :key => :user_id
         many_to_many :members, :class => Sql::User, :right_key => :user_id
         one_to_many :jobs, :class => Sql::Job
         one_to_many :repositories, :class => Sql::Repository
