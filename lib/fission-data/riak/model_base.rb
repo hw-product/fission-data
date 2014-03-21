@@ -80,8 +80,12 @@ module Fission
                   []
                 end
 
-                # Return assocations of class
                 def link_associations
+                  associations
+                end
+
+                # Return assocations of class
+                def associations
                   unless(@associations)
                     @associations = Hash.new
                   end
