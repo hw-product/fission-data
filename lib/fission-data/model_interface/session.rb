@@ -11,8 +11,8 @@ module Fission
 
           # keys_and_value:: keys to walk. Last arg is value
           # Set value into session_data hash
-          def set(*keys_and_value)
-            result = Hash.walk_set(self.data, *keys_and_value)
+          def put(*keys_and_value)
+            result = Fission::Data::Hash.walk_set(self.data.to_hash, *keys_and_value)
             self.save
             result
           end
@@ -20,7 +20,7 @@ module Fission
           # keys:: keys to walk
           # Return value at end of path
           def get(*keys)
-            Hash.walk_get(self.data, *keys)
+            Fission::Data::Hash.walk_get(self.data.to_hash, *keys)
           end
 
         end

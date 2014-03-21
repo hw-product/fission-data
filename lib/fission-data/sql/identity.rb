@@ -16,6 +16,13 @@ module Fission
           validates_presence [:uid, :user_id]
         end
 
+        def before_save
+          super
+          self.credentials = Sequel.hstore(self.credentials)
+          self.extras = Sequel.hstore(self.extras)
+          self.infos = Sequel.hstore(self.infos)
+        end
+
         def provider_identity
           [self.source.name, self.uid].compact.join('_')
         end
@@ -24,7 +31,9 @@ module Fission
 
           def lookup(uid, provider=nil)
             source = Source.find_by_name(provider || 'internal')
-            source.identities_dataset.where(:uid => uid).first
+            if(source)
+              source.identities_dataset.where(:uid => uid).first
+            end
           end
 
         end

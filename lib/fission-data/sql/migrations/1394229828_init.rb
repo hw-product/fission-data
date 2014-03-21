@@ -18,6 +18,7 @@ Sequel.migration do
 
     create_table(:accounts) do
       String :name, :null => false, :unique => true
+      String :email
       DateTime :updated_at
       DateTime :created_at
       foreign_key :user_id
@@ -26,11 +27,24 @@ Sequel.migration do
       index [:id, :source_id], :unique => true
     end
 
-    create_join_table(:account_id => :accounts, :user_id => :users)
+    create_table(:accounts_members) do
+      foreign_key :account_id, :accounts, :null => false
+      foreign_key :user_id, :users, :null => false
+      primary_key [:account_id, :user_id]
+      index [:user_id, :account_id]
+    end
+
+    create_table(:accounts_owners) do
+      foreign_key :account_id, :accounts, :null => false
+      foreign_key :user_id, :users, :null => false
+      primary_key [:account_id, :user_id]
+      index [:user_id, :account_id]
+    end
 
     create_table(:stripes) do
-      String :stripe_id, :null => false, :unique => true
+      String :stripe_id, :null => false
       String :subscription_id
+      String :subscription_plan_id
       Integer :subscription_expires
       foreign_key :account_id, :null => false
       primary_key :id

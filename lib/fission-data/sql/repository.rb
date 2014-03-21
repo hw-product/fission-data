@@ -28,10 +28,12 @@ module Fission
 
           def restrict(user)
             self.where(
-              :account_id => user.base_account_dataset.or(
-                user.managed_accounts.dataset
+              :account_id => Fission::Data::Account.where(
+                :user_id => user.id
+              ).or(
+                :user_id => user.managed_accounts_dataset.select(:id)
               ).select(:id)
-            ).order(:name.asc)
+            ).order(:name.asc).all
           end
 
         end

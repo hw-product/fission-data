@@ -9,7 +9,7 @@ module Fission
         def validate
           super
           validates_presence :stripe_id
-          validates_unique :stripe_id
+#          validates_unique :subscription_id
         end
 
       end

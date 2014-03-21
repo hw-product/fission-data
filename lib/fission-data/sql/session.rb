@@ -4,6 +4,8 @@ module Fission
 
       class Session < Sequel::Model
 
+        include Fission::Data::ModelInterface::Session
+
         self.add_pg_typecast_on_load_columns :data
 
         many_to_one :user, :class => Sql::User
@@ -11,6 +13,11 @@ module Fission
         def validate
           super
           validates_presence :user_id
+        end
+
+        def before_save
+          super
+          self.data = {}
         end
 
       end

@@ -21,23 +21,29 @@ module Fission
               Rails.logger.info "Found existing identity: #{identity.inspect}"
             else
               Rails.logger.info "No existing identity found! Creating new user"
+              if(defined?(Fission::Data::Source))
+                source = Fission::Data::Source.find_or_create(:name => attributes[:provider])
+              end
               username = attributes[:info].try(:[], :nickname) ||
                 attributes[:info].try(:[], :login) ||
                 attributes[:info].try(:[], :email) ||
                 unique_id
-              user = User.by_username(username)
+              user = Fission::Data::User.find_by_username(username)
               if(user)
                 raise 'User exists. Where is ident!?'
               else
-                user = User.create(:username => username)
+                user = Fission::Data::User.new(:username => username)
+                user.source = source if source
+                user.save
                 if(user)
-                  identity = Identity.new
+                  identity = Fission::Data::Identity.new
                   identity.provider = attributes[:provider]
                   identity.uid = attributes[:uid]
                   identity.extras = attributes[:extras]
                   identity.credentials = attributes[:credentials]
                   identity.infos = attributes[:info]
                   identity.user = user
+                  identity.source = source if source
                   unless(identity.save)
                     Rails.logger.error identity.errors.inspect
                     raise identity.errors unless identity.save

@@ -1,6 +1,7 @@
 require 'sequel'
 require 'multi_json'
 require 'fission-data'
+require 'ostruct'
 
 module Fission
   module Data
@@ -87,14 +88,16 @@ class Sequel::Model
     def method_missing(method, *args, &block)
       if(method.to_s.start_with?('find_by'))
         key = method.to_s.sub('find_by_', '').to_sym
-        self.find(key => args.first)
+        self.filter(key => args.first.to_s).first
       else
         super
       end
     end
 
-    def sorter!(set)
-    end
+  end
+
+  def run_state
+    @run_state ||= OpenStruct.new
   end
 
   def display_links(user)
@@ -105,6 +108,26 @@ class Sequel::Model
     if(respond_to?(:name) && respond_to?(:source))
       "#{name}_#{source.name}"
     end
+  end
+
+  # TODO: Better `#add_` mapping and include removal
+  def method_missing(method, *args, &block)
+    if(method.to_s.start_with?('add_') && method.to_s.end_with?('s'))
+      non_plural = method.to_s.sub(/s$/, '').to_sym
+      if(respond_to?(non_plural))
+        unless(self.send(method.to_s.sub('add_', '')).include?(args.first))
+          self.send(non_plural, *args, &block)
+        end
+      else
+        super
+      end
+    else
+      super
+    end
+  end
+
+  def key
+    id
   end
 
 end

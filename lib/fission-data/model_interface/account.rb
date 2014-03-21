@@ -15,12 +15,16 @@ module Fission
 
           def find_stripe_customer(account_name)
             if(account_name)
-              if(defined?(Stripe))
+              if(defined?(::Stripe))
                 unless(@retrieved)
+                  @retrieved = ::Stripe::Customer.all.to_a
+                  # TODO: looping gets us a weird threading error
+=begin
                   @retrieved = []
-                  until((customers = Stripe::Customer.all(:offset => @retrieved.size)).count < 1)
+                  until((customers = ::Stripe::Customer.all(:offset => @retrieved.size)).count < 1)
                     @retrieved += customers.to_a
                   end
+=end
                 end
                 @retrieved.detect do |customer|
                   customer.metadata[:fission_account_name] = account_name

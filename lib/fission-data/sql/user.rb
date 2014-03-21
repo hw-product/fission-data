@@ -8,9 +8,9 @@ module Fission
 
         # TODO: base acct
         one_to_one :base_account, :class => Sql::Account
-        one_to_many :accounts, :class => Sql::Account
+        one_to_many :accounts, :class => Sql::Account, :join_table => 'accounts_members'
         one_to_one :active_session, :class => Sql::Session
-        many_to_many :managed_accounts, :class => Sql::Account, :right_key => :account_id
+        many_to_many :managed_accounts, :class => Sql::Account, :right_key => :account_id, :join_table => 'accounts_owners'
         one_to_many :identities, :class => Sql::Identity
         many_to_one :source, :class => Sql::Source
 

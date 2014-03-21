@@ -7,7 +7,8 @@ module Fission
         include Fission::Data::ModelInterface::Account
 
         many_to_one :owner, :class => Sql::User, :key => :user_id
-        many_to_many :members, :class => Sql::User, :right_key => :user_id
+        many_to_many :owners, :class => Sql::User, :right_key => :user_id, :join_table => 'accounts_owners'
+        many_to_many :members, :class => Sql::User, :right_key => :user_id, :join_table => 'accounts_members'
         one_to_many :jobs, :class => Sql::Job
         one_to_many :repositories, :class => Sql::Repository
         many_to_many :tokens, :class => Sql::Token
@@ -39,28 +40,13 @@ module Fission
             account
           end
 
-          def find_stripe_customer(account_name)
-            if(account_name)
-              if(defined?(Stripe))
-                unless(@retrieved)
-                  @retrieved = []
-                  until((customers = Stripe::Customer.all(:offset => @retrieved.size)).count < 1)
-                    @retrieved += customers.to_a
-                  end
-                end
-                @retrieved.detect do |customer|
-                  customer.metadata[:fission_account_name] = account_name
-                end
-              end
-            end
-          end
-
         end
 
         def set_payment_information
           customer = payment_account
           if(customer)
             unless(self.stripe)
+              self.save if self.new?
               self.stripe = Stripe.new(:stripe_id => customer.id)
             end
             if(customer.subscription)
@@ -77,9 +63,9 @@ module Fission
 
         # Return payment object linked to this account
         def payment_account
-          if(defined?(Stripe))
+          if(defined?(::Stripe))
             if(self.stripe_id)
-              Stripe::Customer.retrieve(self.stripe_id)
+              ::Stripe::Customer.retrieve(self.stripe_id)
             else
               ns = self.name_source || self.class.source_key(name, source)
               self.class.find_stripe_customer(ns)
@@ -94,19 +80,27 @@ module Fission
         # TODO: Update these with a proper delegate
 
         def stripe_id
-          self.stripe.stripe_id
+          if(self.stripe)
+            self.stripe.stripe_id
+          end
         end
 
         def subscription_id
-          self.stripe.subscription_id
+          if(self.stripe)
+            self.stripe.subscription_id
+          end
         end
 
         def subscription_plan_id
-          self.stripe.subscription_plan_id
+          if(self.stripe)
+            self.stripe.subscription_plan_id
+          end
         end
 
         def subscription_expires
-          self.stripe.subscription_expires
+          if(self.stripe)
+            self.stripe.subscription_expires
+          end
         end
 
       end

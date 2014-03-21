@@ -14,7 +14,7 @@ module Fission
           # attributes:: Attribute hash including `:username` and `:password`
           # Attempt to locate user and authenticate
           def authenticate(attributes)
-            ident = Identity.lookup(attributes[:username], :internal)
+            ident = Fission::Data::Identity.lookup(attributes[:username], :internal)
             if(ident && ident.authenticate(attributes[:password]))
               ident.user
             end
@@ -26,7 +26,7 @@ module Fission
             user = new(:username => attributes[:username])
             if(user.save)
               if(attributes[:provider] == :internal)
-                identity = Identity.new(
+                identity = Fission::Data::Identity.new(
                   :uid => attributes[:username],
                   :email => attributes[:email],
                   :provider => :internal
@@ -68,10 +68,14 @@ module Fission
           # Create an account and attach it to this user as the base account
           def create_account(name=nil)
             unless(base_account)
-              act = Account.new(
+              act = Fission::Data::Account.new(
                 :name => name || username,
                 :owner => self
               )
+              if(defined?(Fission::Data::Source))
+                source = Fission::Data::Source.find_or_create(:name => 'internal')
+                act.source = source
+              end
               if(act.save)
                 self.base_account = act
                 unless(self.save)
@@ -86,7 +90,7 @@ module Fission
           # session access wrapper
           def session
             unless(self.active_session)
-              self.active_session = Session.create
+              self.active_session = Fission::Data::Session.create(:user => self)
               self.save
             end
             self.active_session
@@ -98,7 +102,7 @@ module Fission
             if(current)
               current.delete
             end
-            self.active_session = Session.create
+            self.active_session = Fission::Data::Session.create(:user => self)
             self.save
           end
 
