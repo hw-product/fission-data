@@ -2,7 +2,7 @@ module Fission
   module Data
     module Sql
 
-      class Session < BaseModel
+      class Session < Sequel::Model
 
         self.add_pg_typecast_on_load_columns :data
 

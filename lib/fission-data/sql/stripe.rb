@@ -2,7 +2,7 @@ module Fission
   module Data
     module Sql
 
-      class Stripe < BaseModel
+      class Stripe < Sequel::Model
 
         many_to_one :account, :class => Sql::Account
 

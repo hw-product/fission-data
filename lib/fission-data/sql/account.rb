@@ -2,7 +2,7 @@ module Fission
   module Data
     module Sql
 
-      class Account < BaseModel
+      class Account < Sequel::Model
 
         many_to_one :owner, :class => Sql::User
         many_to_many :members, :class => Sql::User, :right_key => :user_id

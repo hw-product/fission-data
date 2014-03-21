@@ -2,10 +2,10 @@ module Fission
   module Data
     module Sql
 
-      class Source < BaseModel
+      class Source < Sequel::Model
 
         one_to_many :users, :class => Sql::User
-        one_to_many :accounts, :class => Sql::User
+        one_to_many :accounts, :class => Sql::Account
 
         def validate
           super

@@ -2,7 +2,7 @@ module Fission
   module Data
     module Sql
 
-      class User < BaseModel
+      class User < Sequel::Model
 
         one_to_many :accounts, :class => Sql::Account
         one_to_one :session, :class => Sql::Session

@@ -2,7 +2,7 @@ module Fission
   module Data
     module Sql
 
-      class Job < BaseModel
+      class Job < Sequel::Model
 
         self.add_pg_typecast_on_load_columns :payload
 

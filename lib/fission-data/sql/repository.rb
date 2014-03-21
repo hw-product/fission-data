@@ -2,7 +2,7 @@ module Fission
   module Data
     module Sql
 
-      class Repository < BaseModel
+      class Repository < Sequel::Model
 
         self.add_pg_typecast_on_load_columns :metadata
 

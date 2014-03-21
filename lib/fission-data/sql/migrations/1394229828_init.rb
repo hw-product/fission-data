@@ -1,7 +1,7 @@
 Sequel.migration do
   change do
 
-    create_table(:origins) do
+    create_table(:sources) do
       String :name, :null => false, :unique => true
       primary_key :id
     end
@@ -11,9 +11,9 @@ Sequel.migration do
       String :name
       DateTime :updated_at
       DateTime :created_at
-      foreign_key :origin_id, :null => false
+      foreign_key :source_id, :null => false
       primary_key :id
-      index [:id, :origin_id], :unique => true
+      index [:id, :source_id], :unique => true
     end
 
     create_table(:accounts) do
@@ -21,9 +21,9 @@ Sequel.migration do
       DateTime :updated_at
       DateTime :created_at
       foreign_key :user_id
-      foreign_key :origin_id, :null => false
+      foreign_key :source_id, :null => false
       primary_key :id
-      index [:id, :origin_id], :unique => true
+      index [:id, :source_id], :unique => true
     end
 
     create_join_table(:account_id => :accounts, :user_id => :users)

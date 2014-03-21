@@ -39,6 +39,10 @@ module Fission
   end
 end
 
+[:timestamps, :dirty, :pg_typecast_on_load, :validation_helpers].each do |plugin_name|
+  Sequel::Model.plugin plugin_name
+end
+
 module Fission
   module Data
     Dir.glob(File.join(File.dirname(__FILE__), File.basename(__FILE__).sub(File.extname(__FILE__), ''), '*')).map do |file|

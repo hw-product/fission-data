@@ -2,7 +2,7 @@ module Fission
   module Data
     module Sql
 
-      class Token < BaseModel
+      class Token < Sequel::Model
 
         many_to_many :users, :class => Sql::User
         many_to_many :accounts, :class => Sql::Account
