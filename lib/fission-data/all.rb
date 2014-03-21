@@ -1,7 +1,8 @@
 require 'fission-data'
 
 # Force load constants (generally used for rails)
-%w(Account Identity Job Product Repository User).each do |klass|
+Dir.glob(File.join(File.dirname(__FILE__), 'sql', '*')).each do |path|
+  klass = File.basename(path).sub(File.extname(path, '')).split('_').map(&:capitalize).join.to_sym
   Fission::Data.const_get(klass)
 end
 

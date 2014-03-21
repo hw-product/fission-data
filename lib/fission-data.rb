@@ -1,13 +1,15 @@
 require 'fission-data/version'
 
 if(ENV['FISSION_DATA_TYPE'])
-  require "fission/#{ENV['FISSION_DATA_TYPE'}"
+  require "fission/#{ENV['FISSION_DATA_TYPE']}"
 end
 
 module Fission
   module Data
 
     autoload :Error, 'fission-data/errors'
+    autoload :ModelInterface, 'fission-data/model_interface'
+    autoload :Hash, 'fission-data/utils/hash'
 
     module Utils
 

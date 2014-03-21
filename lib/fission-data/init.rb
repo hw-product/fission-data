@@ -1,6 +1,6 @@
 require 'fission-data'
 
-# Establish connection to riak
-Fission::Data::ModelBase.connect!
+# Establish database connection
+Fission::Data.connect!
 
 require 'fission-data/all'

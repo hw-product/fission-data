@@ -9,28 +9,9 @@ module Fission
     module Riak
       class ModelBase < Risky
 
-        FISSION_RIAK_CONFIG = '/etc/fission/riak.json'
-
         # Execute these things on inclusion
 
         class << self
-
-          def connect!(args=Hash.new)
-            if(args.empty? || args[:file])
-              args = connection_arguments(args[:file])
-            end
-            Risky.riak = Riak::Client.new(args)
-          end
-
-          def connection_arguments(path=nil)
-            path = [path, ENV['FISSION_RIAK_CONFIG'] || FISSION_RIAK_CONFIG].detect do |test_path|
-              File.exists?(test_path.to_s)
-            end
-            raise 'Failed to discover valid path for riak connection configuration!' unless path
-            Fission::Data::Hash.symbolize_hash(
-              MultiJson.load(File.read(path))
-            )
-          end
 
           def inherited(klass)
             klass.class_eval do
