@@ -5,6 +5,8 @@ module Fission
     module Riak
       class Account < ModelBase
 
+        include Fission::Data::ModelInterface::Account
+
         bucket :accounts
 
         value :name, :class => String
@@ -58,17 +60,6 @@ module Fission
             account
           end
 
-          # Attributes to display by default
-          def display_attributes
-            [:name, :source, :owner]
-          end
-
-          # user:: Fission::Data::User instance
-          # Only show user accounts they own
-          def restrict(user)
-            ([user.base_account] + user.managed_accounts).compact.uniq
-          end
-
           # Detect existing stripe customer instance for this account
           def find_stripe_customer(account_name)
             if(account_name)
@@ -97,51 +88,6 @@ module Fission
           self.name_source = self.class.source_key(name, source)
         end
 
-        # Look pretty in strings
-        def to_s
-          name
-        end
-
-        # Return if account has subscription
-        def subscribed?
-          !!subscription_id
-        end
-
-        # Return if subscription is expired
-        def expired?
-          if(subscription_expires)
-            subscription_expires < Time.now.to_i
-          end
-        end
-
-        # Return if account is active (valid subscription)
-        def active?
-          subscribed? && !expired?
-        end
-
-        # user:: Fission::Data::Instance
-        # Return if user is valid owner of this account
-        def owner?(user)
-          user == owner || owners.include?(user)
-        end
-
-        # Return a valid github access token of an owner
-        def github_token
-          user = self.owner || self.owners.first
-          user.identities.detect do |identity|
-            identity.provider.to_sym == :github
-          end.credentials['token']
-        end
-
-        # Restrict link display based on user status
-        def display_links(user)
-          if(owner?(user))
-            super
-          else
-            []
-          end
-        end
-
         # Updates payment information from remote payment data
         def set_payment_information
           customer = payment_account
@@ -155,18 +101,6 @@ module Fission
             true
           else
             false
-          end
-        end
-
-        # Return payment object linked to this account
-        def payment_account
-          if(defined?(Stripe))
-            if(self.stripe_id)
-              Stripe::Customer.retrieve(self.stripe_id)
-            else
-              ns = self.name_source || self.class.source_key(name, source)
-              self.class.find_stripe_customer(ns)
-            end
           end
         end
 

@@ -1,16 +1,11 @@
 module Fission
   module Data
     module ModelInterface
-      autoload :ClassMethods, 'fission-data/model_interface/class_methods'
-      autoload :InstanceMethods, 'fission-data/model_interface/instance_methods'
 
-      class << self
-
-        def included(klass)
-          klass.send(:include, InstanceMethods)
-          klass.send(:extend, ClassMethods)
-        end
-
+      Dir.glob(File.join(File.dirname(__FILE__), 'model_interface', '*')).each do |path|
+        klass = File.basename(path).sub(File.extname(path), '').split('_').map(&:capitalize).join.to_sym
+        path = "fission-data/model_interface/#{File.basename(path)}"
+        autoload klass, path
       end
 
     end

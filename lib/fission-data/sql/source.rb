@@ -6,6 +6,7 @@ module Fission
 
         one_to_many :users, :class => Sql::User
         one_to_many :accounts, :class => Sql::Account
+        one_to_many :identities, :class => Sql::Identity
 
         def validate
           super

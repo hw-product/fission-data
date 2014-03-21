@@ -69,6 +69,7 @@ Sequel.migration do
       column :extras, :hstore
       column :infos, :hstore
       foreign_key :user_id, :null => false
+      foreign_key :source_id, :null => false
       primary_key :id
     end
 

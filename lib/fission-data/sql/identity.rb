@@ -4,13 +4,29 @@ module Fission
 
       class Identity < Sequel::Model
 
+        include Fission::Data::ModelInterface::Identity
+
         self.add_pg_typecast_on_load_columns :credentials, :extras, :infos
 
+        many_to_one :source, :class => Sql::Source
         many_to_one :user, :class => Sql::User
 
         def validate
           super
           validates_presence [:uid, :user_id]
+        end
+
+        def provider_identity
+          [self.source.name, self.uid].compact.join('_')
+        end
+
+        class << self
+
+          def lookup(uid, provider=nil)
+            source = Source.find_by_name(provider || 'internal')
+            source.identities_dataset.where(:uid => uid).first
+          end
+
         end
 
       end

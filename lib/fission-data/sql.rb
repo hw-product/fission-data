@@ -1,5 +1,6 @@
 require 'sequel'
 require 'multi_json'
+require 'fission-data'
 
 module Fission
   module Data
@@ -47,7 +48,7 @@ end
 
 class Sequel::Model
 
-  include ModelInterface
+  include Fission::Data::ModelInterface
 
   class << self
 
@@ -100,9 +101,15 @@ class Sequel::Model
     self.class.associations.keys
   end
 
+  def name_source
+    if(respond_to?(:name) && respond_to?(:source))
+      "#{name}_#{source.name}"
+    end
+  end
+
 end
 
-[:timestamps, :dirty, :pg_typecast_on_load, :validation_helpers].each do |plugin_name|
+[:hook_class_methods, :timestamps, :dirty, :pg_typecast_on_load, :validation_helpers].each do |plugin_name|
   Sequel::Model.plugin plugin_name
 end
 

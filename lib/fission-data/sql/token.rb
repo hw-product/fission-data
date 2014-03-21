@@ -4,6 +4,8 @@ module Fission
 
       class Token < Sequel::Model
 
+        include Fission::Data::ModelInterface::Token
+
         many_to_many :users, :class => Sql::User
         many_to_many :accounts, :class => Sql::Account
 

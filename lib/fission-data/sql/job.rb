@@ -4,6 +4,8 @@ module Fission
 
       class Job < Sequel::Model
 
+        include Fission::Data::ModelInterface::Job
+
         self.add_pg_typecast_on_load_columns :payload
 
         many_to_one :account, :class => Sql::Account
@@ -11,6 +13,18 @@ module Fission
         def validate
           super
           validates_presence [:message_id, :account_id]
+        end
+
+        class << self
+
+          def restrict(user)
+            self.where(
+              :account_id => user.base_account_dataset.or(
+                user.managed_accounts.dataset
+              ).select(:id)
+            ).order(:updated_at.desc)
+          end
+
         end
 
         # Compat method
