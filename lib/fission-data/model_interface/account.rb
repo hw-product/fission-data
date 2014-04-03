@@ -77,6 +77,18 @@ module Fission
             end
           end
 
+          # Return payment object linked to this account
+          def payment_account
+            if(defined?(::Stripe))
+              if(self.stripe_id)
+                ::Stripe::Customer.retrieve(self.stripe_id)
+              else
+                ns = self.name_source || self.class.source_key(name, source)
+                self.class.find_stripe_customer(ns)
+              end
+            end
+          end
+
         end
 
         class << self
