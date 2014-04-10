@@ -67,7 +67,7 @@ Sequel.migration do
       TrueClass :private, :null => false, :default => true
       DateTime :updated_at
       DateTime :created_at
-      column :metadata, :hstore
+      column :metadata, :json
       primary_key :id
       foreign_key :account_id, :null => false
     end
@@ -79,9 +79,9 @@ Sequel.migration do
       DateTime :updated_at
       DateTime :created_at
       String :password_digest
-      column :credentials, :hstore
-      column :extras, :hstore
-      column :infos, :hstore
+      column :credentials, :json
+      column :extras, :json
+      column :infos, :json
       foreign_key :user_id, :null => false
       foreign_key :source_id, :null => false
       primary_key :id
@@ -90,7 +90,7 @@ Sequel.migration do
     create_table(:sessions) do
       DateTime :updated_at
       DateTime :created_at
-      column :data, :hstore
+      column :data, :json
       foreign_key :user_id, :null => false
       primary_key :id
     end
@@ -99,7 +99,7 @@ Sequel.migration do
       String :message_id, :null => false, :unique => true
       DateTime :updated_at
       DateTime :created_at
-      column :payload, :hstore
+      column :payload, :json
       foreign_key :account_id, :null => false
       primary_key :id
     end

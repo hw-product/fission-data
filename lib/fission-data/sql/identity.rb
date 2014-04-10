@@ -18,9 +18,9 @@ module Fission
 
         def before_save
           super
-          self.credentials = Sequel.hstore(self.credentials)
-          self.extras = Sequel.hstore(self.extras)
-          self.infos = Sequel.hstore(self.infos)
+          self.credentials = Sequel.pg_json(self.credentials)
+          self.extras = Sequel.pg_json(self.extras)
+          self.infos = Sequel.pg_json(self.infos)
         end
 
         def provider_identity

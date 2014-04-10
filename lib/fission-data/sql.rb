@@ -16,8 +16,8 @@ module Fission
             if(args.empty? || args[:file])
               args = connection_arguments(args[:file])
             end
-            Sequel.extension :pg_hstore
-            Sequel.extension :pg_hstore_ops
+            Sequel.extension :pg_array
+            Sequel.extension :pg_json
             Sequel.extension :migration
             db = Thread.current[:db] = Sequel.connect(args)
             migrate!(db)
