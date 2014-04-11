@@ -12,6 +12,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'risky' # TODO: add version peg
   s.add_dependency 'hashie'
   s.add_dependency 'sequel'
-#  s.add_dependency 'pg'
   s.files = Dir['**/*']
 end
