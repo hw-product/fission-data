@@ -1,7 +1,7 @@
 require 'fission-data'
 
 # Force load constants (generally used for rails)
-Dir.new(File.join(File.dirname(__FILE__), defined?(Fission::Data::Sql) ? 'sql' : 'riak').each do |path|
+Dir.new(File.join(File.dirname(__FILE__), defined?(Fission::Data::Sql) ? 'sql' : 'riak')).each do |path|
   klass = File.basename(path).sub(File.extname(path), '').split('_').map(&:capitalize).join.to_sym
   Fission::Data.const_get(klass)
 end
