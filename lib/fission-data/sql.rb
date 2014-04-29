@@ -140,7 +140,7 @@ end
 
 module Fission
   module Data
-    Dir.new(File.join(File.dirname(__FILE__), File.basename(__FILE__).sub(File.extname(__FILE__)))).map do |file|
+    Dir.new(File.join(File.dirname(__FILE__), File.basename(__FILE__).sub(File.extname(__FILE__), ''))).map do |file|
       next if file.start_with?('.')
       [
         File.basename(file).sub(File.extname(file), '').split('_').map(&:capitalize).join.to_sym,

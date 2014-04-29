@@ -104,5 +104,33 @@ Sequel.migration do
       primary_key :id
     end
 
+    create_table(:tags) do
+      String :name, :null => false, :unique => true
+      DateTime :updated_at
+      DateTime :created_at
+      primary_key :id
+    end
+
+    create_table(:logs) do
+      String :path, :null => false
+      String :source, :null => false
+      DateTime :updated_at
+      DateTime :created_at
+      index [:path, :source], :unique => true
+      foreign_key :account_id
+      primary_key :id
+    end
+
+    create_table(:log_entries) do
+      String :entry, :null => false
+      Float :entry_time, :null => false
+      DateTime :updated_at
+      DateTime :created_at
+      foreign_key :log_id, :null => false
+      primary_key :id
+    end
+
+    create_join_table(:log_entry_id => :log_entries, :tag_id => :tags)
+
   end
 end

@@ -1,11 +1,5 @@
 require 'fission-data/version'
 
-if(ENV['FISSION_DATA_TYPE'])
-  require "fission/#{ENV['FISSION_DATA_TYPE']}"
-else
-  require 'fission-data/riak'
-end
-
 module Fission
   module Data
 
@@ -20,4 +14,10 @@ module Fission
 
     end
   end
+end
+
+if(ENV['FISSION_DATA_TYPE'])
+  require "fission-data/#{ENV['FISSION_DATA_TYPE']}"
+else
+  require 'fission-data/riak'
 end
