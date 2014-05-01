@@ -33,7 +33,7 @@ module Fission
               ).or(
                 :user_id => user.managed_accounts_dataset.select(:id)
               ).select(:id)
-            ).order(:name.asc).all
+            ).order(:name).all
           end
 
         end
