@@ -91,7 +91,8 @@ module Fission
               # session access wrapper
               def session
                 unless(self.active_session)
-                  self.active_session = Fission::Data::Session.create(:user => self)
+                  session = Fission::Data::Session.create(:user => self, :data => {})
+                  self.reload
                   self.save
                 end
                 self.active_session
