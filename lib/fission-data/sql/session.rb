@@ -6,9 +6,9 @@ module Fission
 
         include Fission::Data::ModelInterface::Session
 
-        self.add_pg_typecast_on_load_columns :data
-
         many_to_one :user, :class => Sql::User
+
+        self.add_pg_typecast_on_load_columns :data
 
         def validate
           super
@@ -17,7 +17,7 @@ module Fission
 
         def before_save
           super
-          self.data = {}
+          self.data = Sequel.pg_json(self.data)
         end
 
       end
