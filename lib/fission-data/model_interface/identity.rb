@@ -36,33 +36,29 @@ module Fission
                       attributes[:info].try(:[], :email) ||
                       unique_id
                     user = Fission::Data::User.find_by_username(username)
-                    if(user)
-                      raise 'User exists. Where is ident!?'
-                    else
+                    unless(user)
                       user = Fission::Data::User.new(:username => username)
                       user.source = source if source
                       user.save
-                      if(user)
-                        identity = Fission::Data::Identity.new
-                        identity.provider = attributes[:provider]
-                        identity.uid = attributes[:uid]
-                        identity.extras = attributes[:extras]
-                        identity.credentials = attributes[:credentials]
-                        identity.infos = attributes[:info]
-                        identity.user = user
-                        identity.source = source if source
-                        unless(identity.save)
-                          Rails.logger.error identity.errors.inspect
-                          raise identity.errors unless identity.save
-                        end
-                      else
-                        raise "Failed to create user!"
-                      end
                     end
+                    identity = Fission::Data::Identity.new
+                    identity.user = user
                   end
-                  identity
                 end
+                identity.provider = attributes[:provider]
+                identity.uid = attributes[:uid]
+                identity.extras = attributes[:extras]
+                identity.credentials = attributes[:credentials]
+                identity.infos = attributes[:info]
+                identity.source = source if source
 
+                # Set login time
+                identity.user.session.put(:login_time => Time.now.to_f)
+                unless(identity.save)
+                  Rails.logger.error identity.errors.inspect
+                  raise identity.errors unless identity.save
+                end
+                identity
               end
 
               def before_save
