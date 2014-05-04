@@ -4,6 +4,9 @@ module Fission
 
       class Identity < Sequel::Model
 
+        SALTER = 'fission-data-salter-00220'
+        SALTER_JOINER = '~~*~~'
+
         include Fission::Data::ModelInterface::Identity
 
         self.add_pg_typecast_on_load_columns :credentials, :extras, :infos
@@ -18,9 +21,31 @@ module Fission
 
         def before_save
           super
+          unless(self.credentials)
+            self.credentials = {}
+          end
+          self.credentials = Utils::Cipher.encrypt(
+            JSON.dump(self.credentials),
+            :key => [SALTER, self.user.username, self.user.session.get(:login_time)].join(SALTER_JOINER),
+            :iv => self.user.session.get(:login_time)
+          )
           self.credentials = Sequel.pg_json(self.credentials)
           self.extras = Sequel.pg_json(self.extras)
           self.infos = Sequel.pg_json(self.infos)
+        end
+
+        def credentials
+          begin
+            JSON.load(
+              Utils::Cipher.decrypt(
+                super,
+                :key => [SALTER, self.user.username, self.user.session.get(:login_time)].join(SALTER_JOINER),
+                :iv => self.user.session.get(:login_time)
+              )
+            )
+          rescue
+            nil
+          end
         end
 
         def provider_identity
