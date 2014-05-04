@@ -79,7 +79,7 @@ Sequel.migration do
       DateTime :updated_at
       DateTime :created_at
       String :password_digest
-      column :credentials, :json
+      String :credentials
       column :extras, :json
       column :infos, :json
       foreign_key :user_id, :null => false
