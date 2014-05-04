@@ -11,6 +11,7 @@ module Fission
 
       autoload :ValidationCompat, 'fission-data/utils/validation_compat'
       autoload :NamingCompat, 'fission-data/utils/naming_compat'
+      autoload :Cipher, 'fission-data/utils/cipher'
 
     end
   end
