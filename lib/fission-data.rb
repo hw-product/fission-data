@@ -1,6 +1,7 @@
 require 'fission-data/version'
 
 module Fission
+  # Data models for Fission
   module Data
 
     autoload :Error, 'fission-data/errors'
@@ -20,5 +21,5 @@ end
 if(ENV['FISSION_DATA_TYPE'])
   require "fission-data/#{ENV['FISSION_DATA_TYPE']}"
 else
-  require 'fission-data/riak'
+  require 'fission-data/sql'
 end
