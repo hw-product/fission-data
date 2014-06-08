@@ -22,6 +22,7 @@ module Fission
             Sequel.extension :pg_json_ops
             Sequel.extension :migration
             db = Thread.current[:db] = Sequel.connect(args)
+            db.extension :pagination
             migrate!(db)
           end
         end
@@ -156,3 +157,5 @@ module Fission
     end
   end
 end
+
+Fission::Data::ModelBase = Sequel::Model
