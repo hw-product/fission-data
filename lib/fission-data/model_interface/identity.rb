@@ -44,42 +44,43 @@ module Fission
                     identity = Fission::Data::Identity.new
                     identity.user = user
                   end
+                  identity.provider = attributes[:provider]
+                  identity.uid = attributes[:uid]
+                  identity.extras = attributes[:extras]
+                  identity.credentials = attributes[:credentials]
+                  identity.infos = attributes[:info]
+                  identity.source = source if source
+
+                  # Set login time
+                  identity.user.session.put(:login_time => Time.now.to_f)
+                  unless(identity.save)
+                    Rails.logger.error identity.errors.inspect
+                    raise identity.errors unless identity.save
+                  end
+                  identity
                 end
-                identity.provider = attributes[:provider]
-                identity.uid = attributes[:uid]
-                identity.extras = attributes[:extras]
-                identity.credentials = attributes[:credentials]
-                identity.infos = attributes[:info]
-                identity.source = source if source
 
-                # Set login time
-                identity.user.session.put(:login_time => Time.now.to_f)
-                unless(identity.save)
-                  Rails.logger.error identity.errors.inspect
-                  raise identity.errors unless identity.save
+                def before_save
+                  super
+                  if(password)
+                    self.password_digest = checksum(password)
+                  end
                 end
-                identity
-              end
 
-              def before_save
-                super
-                if(password)
-                  self.password_digest = checksum(password)
+                def authenticate(auth_password)
+                  if(password_digest)
+                    password_digest == checksum(auth_password)
+                  end
                 end
-              end
 
-              def authenticate(auth_password)
-                if(password_digest)
-                  password_digest == checksum(auth_password)
+                protected
+
+                # string:: String
+                # Return salted checksum of string
+                def checksum(string)
+                  Digest::SHA512.hexdigest("#{SALT}_#{string}")
                 end
-              end
 
-              protected
-
-              # string:: String
-              # Return salted checksum of string
-              def checksum(string)
-                Digest::SHA512.hexdigest("#{SALT}_#{string}")
               end
 
             end
@@ -89,7 +90,6 @@ module Fission
         end
 
       end
-
     end
   end
 end
