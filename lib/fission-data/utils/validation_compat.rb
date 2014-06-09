@@ -4,10 +4,15 @@ module Fission
   module Data
     module Utils
 
+      # Rails validation helper
       module ValidationCompat
         class << self
+          # Load valid helper
+          #
+          # @param klass [Class]
           def included(klass)
             klass.class_eval do
+              # @return [Truthy, Falsey] validity
               def valid?
                 super
                 elder = self.class.superclass
