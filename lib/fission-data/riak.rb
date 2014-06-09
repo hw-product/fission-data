@@ -3,12 +3,17 @@ require 'fission-data'
 
 module Fission
   module Data
-
+    # Riak backed data storage
     module Riak
 
-      FISSION_RIAK_CONFIG = '/etc/fission/riak.json'
+      # Data configuration path
+      FISSION_DATA_CONFIG = '/etc/fission/riak.json'
 
       class << self
+
+        # Establish connection
+        #
+        # @param args [Hash]
         def connect!(args=Hash.new)
           if(args.empty? || args[:file])
             args = connection_arguments(args[:file])
@@ -16,6 +21,10 @@ module Fission
           Risky.riak = ::Riak::Client.new(args)
         end
 
+        # Load connection arguments
+        #
+        # @param path [String] path to configuration JSON
+        # @return [Hash]
         def connection_arguments(path=nil)
           path = [path, ENV['FISSION_RIAK_CONFIG'] || FISSION_RIAK_CONFIG].detect do |test_path|
             File.exists?(test_path.to_s)
@@ -30,6 +39,7 @@ module Fission
     end
 
     class << self
+      # Establish connection
       def connect!
         Riak.connect!
       end

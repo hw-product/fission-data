@@ -5,12 +5,17 @@ require 'ostruct'
 
 module Fission
   module Data
+    # SQL backed data storage
     module Sql
 
-      FISSION_SQL_CONFIG = '/etc/fission/sql.json'
+      # Data configuration path
+      FISSION_DATA_CONFIG = '/etc/fission/sql.json'
 
       class << self
 
+        # Establish connection
+        #
+        # @param args [Hash]
         def connect!(args=Hash.new)
           unless(Thread.current[:db])
             if(args.empty? || args[:file])
@@ -27,12 +32,20 @@ module Fission
           end
         end
 
+        # Migrate database
+        #
+        # @param db [Sequel::Database]
         def migrate!(db)
           Sequel::Migrator.run(db, File.join(File.dirname(__FILE__), 'sql', 'migrations'))
         end
 
+
+        # Load connection arguments
+        #
+        # @param path [String] path to configuration JSON
+        # @return [Hash]
         def connection_arguments(path=nil)
-          path = [path, ENV['FISSION_SQL_CONFIG'] || FISSION_SQL_CONFIG].detect do |test_path|
+          path = [path, ENV['FISSION_DATA_CONFIG'] || FISSION_DATA_CONFIG].detect do |test_path|
             File.exists?(test_path.to_s)
           end
           raise 'Failed to discover valid path for database connection configuration!' unless path
@@ -43,6 +56,7 @@ module Fission
     end
 
     class << self
+      # Establish connection
       def connect!
         Sql.connect!
       end
@@ -56,18 +70,25 @@ class Sequel::Model
 
   class << self
 
+    # @return [Array<String,Symbol>] attributes of model
     def attribute_names
       columns
     end
 
+    # @return [Array<String,Symbol>] attributes to display
     def display_attributes
       []
     end
 
+    # @return [Array<String,Symbol>] links to display
     def display_links
       []
     end
 
+    # Overide to allow direct find without `:id`
+    #
+    # @param args [Object] argument list
+    # @return [Object]
     def find(*args)
       if(args.first.is_a?(String) || args.first.is_a?(Numeric))
         super(:id => args.first)
@@ -76,6 +97,10 @@ class Sequel::Model
       end
     end
 
+    # Filter items based on user
+    #
+    # @param user [Fission::Data::User]
+    # @return [Sequel::Dataset]
     def restrict(user)
       if(defined?(Rails))
         Rails.logger.warn '!!! No custom user restriction provided. Returning nothing!'
@@ -83,11 +108,13 @@ class Sequel::Model
       []
     end
 
-    # TODO: update this data structure
+    # @return [Array] link associations
+    # @todo update this data structure
     def link_associations
       {}
     end
 
+    # Allow find by attribute name searching
     def method_missing(method, *args, &block)
       if(method.to_s.start_with?('find_by'))
         key = method.to_s.sub('find_by_', '').to_sym
@@ -99,21 +126,25 @@ class Sequel::Model
 
   end
 
+  # @return [OpenStruct] instance state store
   def run_state
     @run_state ||= OpenStruct.new
   end
 
+  # @return [Array<String,Symbol>] links to display
   def display_links(user)
     self.class.associations.keys
   end
 
+  # @return [String] generate key from name and source
   def name_source
     if(respond_to?(:name) && respond_to?(:source))
       "#{name}_#{source.name}"
     end
   end
 
-  # TODO: Better `#add_` mapping and include removal
+  # Add support for add attribute methods
+  # @todo Better `#add_` mapping and include removal
   def method_missing(method, *args, &block)
     if(method.to_s.start_with?('add_') && method.to_s.end_with?('s'))
       non_plural = method.to_s.sub(/s$/, '').to_sym
@@ -129,6 +160,7 @@ class Sequel::Model
     end
   end
 
+  # @return [Numeric, String] model id
   def key
     id
   end
