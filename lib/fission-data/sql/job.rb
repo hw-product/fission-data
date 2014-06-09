@@ -20,7 +20,7 @@ module Fission
           def restrict(user)
             self.where(
               :account_id => user.base_account_dataset.or(
-                user.managed_accounts.dataset
+                :account_id => user.managed_accounts_dataset.select(:id)
               ).select(:id)
             ).order(:updated_at.desc)
           end
