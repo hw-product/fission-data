@@ -1,4 +1,5 @@
 require 'fission-data/version'
+require 'fission'
 
 module Fission
   # Data models for Fission
