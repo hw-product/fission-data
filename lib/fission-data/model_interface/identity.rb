@@ -2,10 +2,14 @@ module Fission
   module Data
     module ModelInterface
 
+      # User identity
       module Identity
 
         class << self
 
+          # Load methods
+          #
+          # @param klass [Class]
           def included(klass)
             klass.send(:const_set, :SALT, 'fission01')
             klass.class_eval do

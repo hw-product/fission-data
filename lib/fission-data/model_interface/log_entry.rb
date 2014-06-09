@@ -22,8 +22,8 @@ module Fission
                     :path => args[:log],
                     :source => args[:source]
                   )
-                  tags = args.fetch(:tags, []).map do |tag_name|
-                    Fission::Data::Tag.find_or_create(:name => tag_name)
+                  tags = (args[:tags] || []).map do |tag_name|
+                    Fission::Data::Tag.find_or_create(:name => tag_name.to_s)
                   end
                   entry = create(
                     :log => log,

@@ -15,6 +15,7 @@ module Fission
 
                 def restrict(user)
                   # only against accts accessible
+                  Fission::Data::Log.dataset
                 end
 
               end

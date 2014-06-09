@@ -2,21 +2,41 @@ module Fission
   module Data
     module ModelInterface
 
+      # Account model base
       module Account
+
+        module ClassMethods
+        end
+
+        module InstanceMethods
+        end
 
         class << self
 
+          # Load commons
+          #
+          # @param klass [Class]
           def included(klass)
             klass.class_eval do
               class << self
+
+                # @return [Array<String,Symbol>] attributes to display
                 def display_attributes
                   [:name, :source, :owner]
                 end
 
+                # Filter items based on user
+                #
+                # @param user [Fission::Data::User]
+                # @return [Dataset]
                 def restrict(user)
                   ([user.base_account] + user.managed_accounts).compact.uniq
                 end
 
+                # Find strip account
+                #
+                # @param account_name [String]
+                # @return [Stripe::Customer]
                 def find_stripe_customer(account_name)
                   if(account_name)
                     if(defined?(::Stripe))
@@ -39,38 +59,34 @@ module Fission
 
               end
 
-              # Return if account has subscription
+              # @return [TrueClass, FalseClass] account has subscription
               def subscribed?
                 !!subscription_id
               end
 
-              # Return if subscription is expired
+              # @return [TrueClass, FalseClass] subscription is expired
               def expired?
                 if(subscription_expires)
                   subscription_expires < Time.now.to_i
+                else
+                  false
                 end
               end
 
-              # Return if account is active (valid subscription)
+              # @return [TrueClass, FalseClass] account is active (valid subscription)
               def active?
                 subscribed? && !expired?
               end
 
-              # user:: Fission::Data::Instance
-              # Return if user is valid owner of this account
+              # User is an owner of account
+              #
+              # @param user Fission::Data::Instance
+              # @return [TrueClass, FalseClass]
               def owner?(user)
                 user == owner || owners.include?(user)
               end
 
-              # Return a valid github access token of an owner
-              def github_token
-                user = self.owner || self.owners.first
-                user.identities.detect do |identity|
-                  identity.provider.to_sym == :github
-                end.credentials['token']
-              end
-
-              # Restrict link display based on user status
+              # @return [Array<String,Symbol>] links to display
               def display_links(user)
                 if(owner?(user))
                   super
@@ -79,7 +95,7 @@ module Fission
                 end
               end
 
-              # Return payment object linked to this account
+              # @return [Stripe::Customer] payment object for this account
               def payment_account
                 if(defined?(::Stripe))
                   if(self.stripe_id)
