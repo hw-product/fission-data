@@ -9,7 +9,7 @@ module Fission
 
         include Fission::Data::ModelInterface::Identity
 
-        self.add_pg_typecast_on_load_columns :credentials, :extras, :infos
+        self.add_pg_typecast_on_load_columns :extras, :infos
 
         many_to_one :source, :class => Sql::Source
         many_to_one :user, :class => Sql::User
@@ -21,28 +21,32 @@ module Fission
 
         def before_save
           super
-          unless(self.credentials)
-            self.credentials = {}
+          unless(self.values[:credentials])
+            self.values[:credentials] = {}
           end
           self.credentials = Utils::Cipher.encrypt(
-            JSON.dump(self.credentials),
+            JSON.dump(self[:credentials]),
             :key => [SALTER, self.user.username, self.user.session.get(:login_time)].join(SALTER_JOINER),
             :iv => self.user.session.get(:login_time)
           )
-          self.credentials = Sequel.pg_json(self.credentials)
           self.extras = Sequel.pg_json(self.extras)
           self.infos = Sequel.pg_json(self.infos)
         end
 
         def credentials
           begin
-            JSON.load(
-              Utils::Cipher.decrypt(
-                super,
-                :key => [SALTER, self.user.username, self.user.session.get(:login_time)].join(SALTER_JOINER),
-                :iv => self.user.session.get(:login_time)
+            res = Smash.new(
+              JSON.load(
+                Utils::Cipher.decrypt(
+                  super,
+                  :key => [
+                    SALTER, self.user.username, self.user.session.get(:login_time)
+                  ].join(SALTER_JOINER),
+                  :iv => self.user.session.get(:login_time)
+                )
               )
             )
+            res
           rescue
             nil
           end
