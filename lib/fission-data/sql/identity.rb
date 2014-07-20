@@ -26,8 +26,8 @@ module Fission
           end
           self.credentials = Utils::Cipher.encrypt(
             JSON.dump(self[:credentials]),
-            :key => [SALTER, self.user.username, self.user.session.get(:login_time)].join(SALTER_JOINER),
-            :iv => self.user.session.get(:login_time)
+            :key => [SALTER, self.user.username, self.user.session.get(:login_time).to_s].join(SALTER_JOINER),
+            :iv => self.user.session.get(:login_time).to_s
           )
           self.extras = Sequel.pg_json(self.extras)
           self.infos = Sequel.pg_json(self.infos)
