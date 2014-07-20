@@ -1,7 +1,7 @@
 require 'fission-data'
 
 # Compatibility class alias
-Fission::Data::Hash < Smash
+class Fission::Data::Hash < Smash; end
 
 unless(Hash.instance_methods.include?(:with_indifferent_access))
   class Hash
