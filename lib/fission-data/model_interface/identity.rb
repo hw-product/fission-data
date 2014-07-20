@@ -56,7 +56,7 @@ module Fission
                   identity.source = source if source
 
                   # Set login time
-                  identity.user.session.put(:login_time => Time.now.to_f)
+                  identity.user.session.put(:login_time, Time.now.to_f)
                   unless(identity.save)
                     Rails.logger.error identity.errors.inspect
                     raise identity.errors unless identity.save
