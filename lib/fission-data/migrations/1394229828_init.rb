@@ -41,13 +41,10 @@ Sequel.migration do
       index [:user_id, :account_id]
     end
 
-    create_table(:stripes) do
-      String :stripe_id, :null => false
-      String :subscription_id
-      String :subscription_plan_id
-      Integer :subscription_expires
+    create_table(:customer_payments) do
+      String :customer_id, :null => false
+      String :type, :null => false
       foreign_key :account_id, :null => false
-      primary_key :id
     end
 
     create_table(:tokens) do
@@ -55,10 +52,19 @@ Sequel.migration do
       DateTime :updated_at
       DateTime :created_at
       primary_key :id
+      foreign_key :user_id
+      foreign_key :paccount_id
     end
 
-    create_join_table(:account_id => :accounts, :token_id => :tokens)
-    create_join_table(:user_id => :users, :token_id => :tokens)
+    create_table(:permissions) do
+      String :name, :null => false, :unique => true
+      String :pattern, :null => false
+      TrueClass :customer_validate, :null => false, :default => false
+      primary_key :id
+    end
+
+    create_join_table(:permission_id => :permissions, :token_id => :tokens)
+    create_join_table(:account_id => :accounts, :permission_id => :permissions)
 
     create_table(:repositories) do
       String :name, :null => false
@@ -117,7 +123,7 @@ Sequel.migration do
       DateTime :updated_at
       DateTime :created_at
       index [:path, :source], :unique => true
-      foreign_key :account_id
+      foreign_key :account_id, :null => false
       primary_key :id
     end
 
