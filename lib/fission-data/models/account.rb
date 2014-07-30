@@ -10,6 +10,7 @@ module Fission
         many_to_one :owner, :class => User, :key => :user_id
         many_to_many :owners, :class => User, :right_key => :user_id, :join_table => 'accounts_owners'
         many_to_many :members, :class => User, :right_key => :user_id, :join_table => 'accounts_members'
+        many_to_many :permissions
         one_to_many :jobs, :class => Job
         one_to_many :repositories, :class => Repository
         one_to_many :tokens, :class => Token
