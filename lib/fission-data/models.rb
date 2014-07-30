@@ -33,7 +33,7 @@ module Fission
 
         # @return [String]
         def to_s
-          respond_to?(name) && name ? name : id
+          id
         end
 
         # @return [OpenStruct] instance state store
@@ -146,6 +146,7 @@ module Fission
       autoload :Tag, 'fission-data/models/tag'
       autoload :Token, 'fission-data/models/token'
       autoload :User, 'fission-data/models/user'
+      autoload :Whitelist, 'fission-data/models/whitelist'
 
     end
   end
