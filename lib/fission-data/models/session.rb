@@ -23,22 +23,6 @@ module Fission
           self.data = Sequel.pg_json(self.data)
         end
 
-        # Fetch value from data
-        #
-        # @param args [String, Symbol]
-        # @return [Object]
-        def get(*args)
-          self.data.get(*args)
-        end
-
-        # Set value into data
-        #
-        # @param args [String, Symbol, Object]
-        # @return [Object]
-        def set(*args)
-          self.data.set(*args)
-        end
-
       end
 
     end
