@@ -13,7 +13,7 @@ Sequel.migration do
       DateTime :created_at
       foreign_key :source_id, :null => false
       primary_key :id
-      index [:id, :source_id], :unique => true
+      index [:username, :source_id], :unique => true
     end
 
     create_table(:accounts) do
@@ -21,10 +21,10 @@ Sequel.migration do
       String :email
       DateTime :updated_at
       DateTime :created_at
-      foreign_key :user_id
+      foreign_key :user_id, :null => false
       foreign_key :source_id, :null => false
       primary_key :id
-      index [:id, :source_id], :unique => true
+      index [:name, :source_id], :unique => true
     end
 
     create_table(:accounts_members) do
@@ -53,7 +53,7 @@ Sequel.migration do
       DateTime :created_at
       primary_key :id
       foreign_key :user_id
-      foreign_key :paccount_id
+      foreign_key :account_id
     end
 
     create_table(:permissions) do
@@ -137,6 +137,12 @@ Sequel.migration do
     end
 
     create_join_table(:log_entry_id => :log_entries, :tag_id => :tags)
+
+    create_table(:whitelists) do
+      String :username, :null => false
+      foreign_key :creator_id, :null => false
+      primary_key :id
+    end
 
   end
 end
