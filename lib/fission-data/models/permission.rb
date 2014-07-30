@@ -14,13 +14,13 @@ module Fission
         def validate
           super
           validates_presence [:name, :pattern]
-          validates_uniqueness :name
+          validates_unique :name
         end
 
-        # @return [Array<Regexp>]
-        def permissions
-          self[:permissions].map do |perm_string|
-            Regexp.new(perm_string)
+        # @return [NilClass, Regexp]
+        def pattern
+          if(self[:pattern])
+            Regexp.new(self[:pattern])
           end
         end
 
