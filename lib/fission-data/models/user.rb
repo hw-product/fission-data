@@ -1,3 +1,4 @@
+require 'ostruct'
 require 'fission-data'
 
 module Fission
@@ -8,15 +9,29 @@ module Fission
       class User < Sequel::Model
 
         # Preferred default identity
-        DEFAULT_IDENTITY = :github
+        DEFAULT_IDENTITY = 'github'
 
-        one_to_one :base_account, :class => Account
-        one_to_many :accounts, :class => Account, :join_table => 'accounts_members'
         one_to_one :active_session, :class => Session
+        one_to_many :owned_accounts, :class => Account
+        many_to_many :member_accounts, :class => Account, :right_key => :account_id, :join_table => 'accounts_members'
         many_to_many :managed_accounts, :class => Account, :right_key => :account_id, :join_table => 'accounts_owners'
-        one_to_many :identities, :class => Identity
-        many_to_one :source, :class => Source
-        one_to_many :tokens, :class => Token
+        one_to_many :identities
+        many_to_one :source
+        one_to_many :tokens
+        one_to_many :whitelists, :key => :creator_id
+
+        # Create new instance
+        # @note used for run_state initializaiton
+        def initialize(*_)
+          super
+          @run_state = OpenStruct.new
+        end
+
+        # @return [OpenStruct] instance cache data
+        def run_state
+          key = "#{self.name}_run_state".to_sym
+          Thread.current[key] ||= OpenStruct.new
+        end
 
         # Validate instance attributes
         def validate
@@ -43,7 +58,11 @@ module Fission
 
         # @return [Array<Permission>]
         def permissions
-          self.accounts.map(&:active_permissions)
+          [self.owned_accounts,
+            self.member_accounts,
+            self.managed_accounts
+          ].flatten.compact.map(&:active_permissions).
+            flatten.compact.uniq
         end
 
         # OAuth token for a provider
@@ -62,21 +81,12 @@ module Fission
         # @param name [String] account name
         # @return [Account]
         def create_account(name=nil)
-          unless(base_account)
-            act = Account.new(
-              :name => name || username,
-              :owner => self
-            )
+          if(owned_accounts.empty?)
             source = Source.find_or_create(:name => 'internal')
-            act.source = source
-            if(act.save)
-              self.base_account = act
-              unless(self.save)
-                raise self.errors
-              end
-            else
-              raise "Failed to create base account"
-            end
+            add_owned_account(
+              :name => name || username,
+              :source_id => source.id
+            )
           end
         end
 
@@ -89,7 +99,7 @@ module Fission
             self.reload
             self.save
           end
-          self.active_session
+          self.active_session.data
         end
 
         # Reset the `session_data`
