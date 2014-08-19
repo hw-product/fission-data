@@ -61,10 +61,32 @@ Sequel.migration do
       String :pattern, :null => false
       TrueClass :customer_validate, :null => false, :default => false
       primary_key :id
+      foreign_key :product_id
     end
 
     create_join_table(:permission_id => :permissions, :token_id => :tokens)
     create_join_table(:account_id => :accounts, :permission_id => :permissions)
+
+    create_table(:products) do
+      String :name, :null => false, :unique => true
+      String :vanity_dns, :unique => true
+      primary_key :id
+    end
+
+    create_table(:product_features) do
+      String :name, :null => false
+      column :data, :json
+      primary_key :id
+      foreign_key :product_id, :null => false
+      index [:name, :product_id], :unique => true
+    end
+
+    create_table(:plans) do
+      String :remote_id, :null => false, :unique => true
+      String :summary
+      String :description
+      primary_key :id
+    end
 
     create_table(:repositories) do
       String :name, :null => false
@@ -143,6 +165,13 @@ Sequel.migration do
       foreign_key :creator_id, :null => false
       primary_key :id
     end
+
+    ## Seed ##
+
+    source = Fission::Data::Models::Source.create(:name => github)
+    user = source.add_user(:username => 'fission_default_admin')
+    user.owned_accounts.add_permission(:name => 'global', :pattern => '/.*')
+    user.add_whitelist(:username => 'fission_default_admin')
 
   end
 end
