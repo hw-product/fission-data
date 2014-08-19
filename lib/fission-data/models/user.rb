@@ -27,6 +27,11 @@ module Fission
           @run_state = OpenStruct.new
         end
 
+        # @return [Account] user specific account
+        def base_account
+          owned_accounts_dataset.where(:name => self.username).first
+        end
+
         # @return [OpenStruct] instance cache data
         def run_state
           key = "#{self.name}_run_state".to_sym
@@ -53,7 +58,9 @@ module Fission
 
         # @return [NilClass, String] email
         def email
-          default_identity.infos[:email]
+          if(default_identity)
+            default_identity[:infos][:email]
+          end
         end
 
         # @return [Array<Permission>]
@@ -63,6 +70,14 @@ module Fission
             self.managed_accounts
           ].flatten.compact.map(&:active_permissions).
             flatten.compact.uniq
+        end
+
+        # @return [Array<Account>] all accounts
+        def accounts
+          [self.owned_accounts,
+            self.member_accounts,
+            self.managed_accounts
+          ].flatten.compact
         end
 
         # OAuth token for a provider
