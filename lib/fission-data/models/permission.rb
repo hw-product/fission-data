@@ -9,7 +9,7 @@ module Fission
 
         many_to_many :tokens
         many_to_many :accounts
-        many_to_one :product
+        many_to_many :product_features
 
         # Validate instance attributes
         def validate

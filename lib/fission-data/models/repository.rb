@@ -10,6 +10,7 @@ module Fission
         self.add_pg_typecast_on_load_columns :metadata
 
         many_to_one :account, :class => Account
+        many_to_many :products
 
         # Validate instance attributes
         def validate

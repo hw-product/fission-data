@@ -60,8 +60,10 @@ Sequel.migration do
       String :name, :null => false, :unique => true
       String :pattern, :null => false
       TrueClass :customer_validate, :null => false, :default => false
+      DateTime :updated_at
+      DateTime :created_at
       primary_key :id
-      foreign_key :product_id
+      foreign_key :product_feature_id
     end
 
     create_join_table(:permission_id => :permissions, :token_id => :tokens)
@@ -69,22 +71,31 @@ Sequel.migration do
 
     create_table(:products) do
       String :name, :null => false, :unique => true
+      String :internal_name, :null => false, :unique => true
       String :vanity_dns, :unique => true
+      DateTime :updated_at
+      DateTime :created_at
       primary_key :id
     end
 
     create_table(:product_features) do
       String :name, :null => false
       column :data, :json
+      DateTime :updated_at
+      DateTime :created_at
       primary_key :id
       foreign_key :product_id, :null => false
       index [:name, :product_id], :unique => true
     end
 
+    create_join_table(:permission_id => :permissions, :product_feature_id => :product_features)
+
     create_table(:plans) do
       String :remote_id, :null => false, :unique => true
       String :summary
       String :description
+      DateTime :updated_at
+      DateTime :created_at
       primary_key :id
     end
 
@@ -99,6 +110,8 @@ Sequel.migration do
       primary_key :id
       foreign_key :account_id, :null => false
     end
+
+    create_join_table(:product_id => :products, :repository_id => :repositories)
 
     create_table(:identities) do
       String :uid, :null => false
@@ -124,7 +137,7 @@ Sequel.migration do
     end
 
     create_table(:jobs) do
-      String :message_id, :null => false, :unique => true
+      String :message_id, :null => false
       DateTime :updated_at
       DateTime :created_at
       column :payload, :json
@@ -162,16 +175,22 @@ Sequel.migration do
 
     create_table(:whitelists) do
       String :username, :null => false
+      DateTime :updated_at
+      DateTime :created_at
       foreign_key :creator_id, :null => false
       primary_key :id
     end
 
-    ## Seed ##
-
-    source = Fission::Data::Models::Source.create(:name => github)
-    user = source.add_user(:username => 'fission_default_admin')
-    user.owned_accounts.add_permission(:name => 'global', :pattern => '/.*')
-    user.add_whitelist(:username => 'fission_default_admin')
+    create_table(:static_pages) do
+      String :content, :null => false
+      String :title, :null => false
+      String :path, :null => false
+      DateTime :updated_at
+      DateTime :created_at
+      foreign_key :product_id, :null => false
+      primary_key :id
+      index [:path, :product_id], :unique => true
+    end
 
   end
 end

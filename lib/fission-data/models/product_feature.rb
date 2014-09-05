@@ -8,6 +8,7 @@ module Fission
       class ProductFeature < Sequel::Model
 
         many_to_one :product
+        many_to_many :permissions
 
         # Validate account attributes
         def validate

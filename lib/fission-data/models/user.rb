@@ -72,6 +72,11 @@ module Fission
             flatten.compact.uniq
         end
 
+        # @return [Array<Repository>]
+        def repositories
+          accounts.map(&:repositories).uniq!
+        end
+
         # @return [Array<Account>] all accounts
         def accounts
           [self.owned_accounts,
@@ -126,6 +131,10 @@ module Fission
             current.delete
           end
           self.session
+        end
+
+        def active_products
+          []
         end
 
         class << self

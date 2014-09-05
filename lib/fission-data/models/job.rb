@@ -9,7 +9,12 @@ module Fission
 
         self.add_pg_typecast_on_load_columns :payload
 
-        many_to_one :account, :class => Account
+        many_to_one :account
+
+        def before_save
+          super
+          self.payload = Sequel.pg_json(self.payload)
+        end
 
         # Validate instance attributes
         def validate
@@ -19,7 +24,7 @@ module Fission
 
         # @return [Fission::Utils::Smash]
         def payload
-          (self.payload || {}).to_smash
+          (self.values[:payload] || {}).to_smash
         end
 
         # @return [String] task of job
@@ -32,7 +37,7 @@ module Fission
           if(self.payload[:error])
             :error
           else
-            if(self.payload[:complete].include?(self.payload[:job]))
+            if(self.payload.fetch(:complete, []).include?(self.payload[:job]))
               :complete
             else
               :in_progress
@@ -46,7 +51,11 @@ module Fission
             !j.include?(':')
           end
           total = [done, self.payload.fetch(:data, :router, :route, [])].flatten.compact
-          ((done.count / total.count.to_f) * 100).to_i
+          unless(total.empty?)
+            ((done.count / total.count.to_f) * 100).to_i
+          else
+            -1
+          end
         end
 
       end

@@ -146,6 +146,7 @@ module Fission
       autoload :Repository, 'fission-data/models/repository'
       autoload :Session, 'fission-data/models/session'
       autoload :Source, 'fission-data/models/source'
+      autoload :StaticPage, 'fission-data/models/static_page'
       autoload :Tag, 'fission-data/models/tag'
       autoload :Token, 'fission-data/models/token'
       autoload :User, 'fission-data/models/user'
@@ -153,4 +154,8 @@ module Fission
 
     end
   end
+end
+
+if(defined?(Rails))
+  require 'fission-data/rails-init'
 end

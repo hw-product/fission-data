@@ -15,6 +15,7 @@ module Fission
         one_to_many :repositories, :class => Repository
         one_to_many :tokens, :class => Token
         one_to_many :customer_payments, :class => CustomerPayment
+        one_to_many :logs
         many_to_one :source, :class => Source
 
         # Validate account attributes
@@ -60,7 +61,7 @@ module Fission
         #
         # @return [Array<Permission>]
         def active_permissions
-          self.permissions.find_all do |perm|
+          perms = self.permissions.find_all do |perm|
             if(perm.customer_validate)
               customer_payments.detect do |customer_payment|
                 customer_payment.valid_permission?(perm)
@@ -68,19 +69,19 @@ module Fission
             else
               true
             end
-          end
+          end + self.customer_payments.map(&:permission_list).map(&:all)
+          perms.flatten.compact.uniq
+        end
+
+        # User is owner of this account
+        #
+        # @param user [User]
+        # @return [Truthy, Falsey]
+        def owner?(user)
+          user == owner || owners.include?(user)
         end
 
       end
-
-      # User is owner of this account
-      #
-      # @param user [User]
-      # @return [Truthy, Falsey]
-      def owner?(user)
-        user == owner || owners.include?(user)
-      end
-
     end
   end
 end
