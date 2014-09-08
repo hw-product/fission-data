@@ -89,6 +89,7 @@ Sequel.migration do
     end
 
     create_join_table(:permission_id => :permissions, :product_feature_id => :product_features)
+    create_join_table(:account_id => :accounts, :product_feature_id => :product_features)
 
     create_table(:plans) do
       String :remote_id, :null => false, :unique => true
