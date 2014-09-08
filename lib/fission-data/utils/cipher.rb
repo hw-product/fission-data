@@ -23,9 +23,9 @@ module Fission
             Base64.urlsafe_encode64(res)
           end
 
-          # Encrypt string
+          # Decrypt string
           #
-          # @param string [String] string to encrypt
+          # @param string [String] string to decrypt
           # @param crypt_hash [Hash]
           # @option crypt_hash [String] :key
           # @option crypt_hash [String] :iv
