@@ -47,12 +47,18 @@ module Fission
 
         # @return [Fission::Utils::Smash]
         def extras
-          (self.extras || {}).to_smash
+          unless(self.values[:extras].is_a?(Smash))
+            self.values[:extras] = (self.values[:extras] || {}).to_smash
+          end
+          self.values[:extras]
         end
 
         # @return [Fission::Utils::Smash]
         def infos
-          (self.infos || {}).to_smash
+          unless(self.values[:infos].is_a?(Smash))
+            self.values[:infos] = (self.values[:infos] || {}).to_smash
+          end
+          self.values[:infos]
         end
 
         # @return [Fission::Utils::Smash] credentials
@@ -61,16 +67,16 @@ module Fission
             res = Smash.new(
               JSON.load(
                 Utils::Cipher.decrypt(
-                  super,
+                  self.values[:credentials],
                   :key => [
                     SALTER, self.user.username, self.user.session.get(:login_time)
                   ].join(SALTER_JOINER),
-                  :iv => self.user.session.get(:login_time)
+                  :iv => self.user.session.get(:login_time).to_s
                 )
               )
             )
             res
-          rescue
+          rescue => e
             nil
           end
         end
@@ -154,9 +160,9 @@ module Fission
             identity.credentials = attributes[:credentials]
             identity.infos = attributes[:info]
             identity.source = source if source
-
             # Set login time
-            identity.user.session.put(:login_time, Time.now.to_f)
+            identity.user.session[:login_time] = Time.now.to_f
+            identity.user.save_session
             unless(identity.save)
               Fission::Data.logger.error identity.errors.inspect
               raise identity.errors unless identity.save
