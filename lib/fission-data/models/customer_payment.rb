@@ -31,12 +31,12 @@ module Fission
               :fission_account => account.expanded_name
             )
             if(customer)
-              CustomerPayment.find_by_customer_id(customer.id) ||
-                CustomerPayment.create(
+              CustomerPayment.find_by_customer_id(customer.id) || CustomerPayment.create(
+
                 :account_id => account.id,
                 :customer_id => customer.id,
                 :type => 'stripe'
-                )
+              )
             end
           end
 
@@ -81,14 +81,26 @@ module Fission
           permission_list.where(:id => permission.id).count > 0
         end
 
+        # @return [Fission::Data::Models::ProductFeature::Dataset]
+        def product_features
+          case type
+          when 'stripe'
+            feature_ids = remote_data.fetch(:subscriptions, :data, []).map do |subscription|
+              subscription.get(:plan, :metadata, :fission_product_features).to_s.split(',')
+            end.compact.flatten.uniq.map(&:to_i)
+            ProductFeature.dataset.where(:id => feature_ids)
+          else
+            ProductFeature.dataset.where(:id => nil)
+          end
+        end
+
         # @return [Sequel::Dataset] permissions valid for this payment
         def permission_list
           case type
           when 'stripe'
-            features = remote_data.fetch(:subscriptions, :data, []).map do |subscription|
-              subscription.get(:plan, :metadata, :fission_product_features).to_s.split(',')
-            end.compact.flatten.uniq.map(&:to_i)
-            Permission.dataset.where(:product_feature_id => features)
+            Permission.dataset.where(
+              :product_feature_id => features.select(:id).all.map(&:id)
+            )
           else
             []
           end
