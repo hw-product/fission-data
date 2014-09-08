@@ -11,12 +11,20 @@ module Fission
         many_to_many :owners, :class => User, :right_key => :user_id, :join_table => 'accounts_owners'
         many_to_many :members, :class => User, :right_key => :user_id, :join_table => 'accounts_members'
         many_to_many :permissions
-        one_to_many :jobs, :class => Job
-        one_to_many :repositories, :class => Repository
-        one_to_many :tokens, :class => Token
-        one_to_many :customer_payments, :class => CustomerPayment
+        one_to_many :jobs
+        one_to_many :repositories
+        one_to_many :tokens
+        one_to_many :customer_payments
         one_to_many :logs
-        many_to_one :source, :class => Source
+        many_to_one :source
+        many_to_many :product_features
+
+        # Scrub associations prior to destruction
+        def before_destroy
+          super
+          self.remove_all_owners
+          self.remove_all_members
+        end
 
         # Validate account attributes
         def validate
@@ -69,8 +77,16 @@ module Fission
             else
               true
             end
-          end + self.customer_payments.map(&:permission_list).map(&:all)
+          end + self.customer_payments.map(&:permission_list).map(&:all) +
+            self.product_features.map(&:permissions)
           perms.flatten.compact.uniq
+        end
+
+        # @return [Array<Fission::Data::Models::ProductFeature>]
+        def product_features
+          (self.product_features_dataset.all +
+            customer_payments.map(&:product_features).map(&:all)
+          ).uniq
         end
 
         # User is owner of this account
