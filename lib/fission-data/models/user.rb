@@ -90,7 +90,7 @@ module Fission
         # @param provider [String]
         # @return [NilClass, String]
         def token_for(provider)
-          ident = self.identities_dataset.where(:provider => provider).first
+          ident = self.identities_dataset.where(:provider => provider.to_s).first
           if(ident)
             ident.credentials[:token]
           end
@@ -110,9 +110,9 @@ module Fission
           end
         end
 
-        # Session access wrapper
+        # Session data wrapper
         #
-        # @return [Session]
+        # @return [Smash]
         def session
           unless(self.active_session)
             session = Session.create(:user => self, :data => {})
@@ -133,8 +133,22 @@ module Fission
           self.session
         end
 
+        # Save current session data if session exists
+        #
+        # @return [Session]
+        def save_session
+          active_session = self.active_session
+          if(active_session)
+            active_session.save
+          end
+          active_session
+        end
+
+
+        # @return [Array<Fission::Data::Models::Product>]
         def active_products
-          []
+          accounts.map(&:product_features).flatten.uniq.
+            map(&:product).uniq
         end
 
         class << self
