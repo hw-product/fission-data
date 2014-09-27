@@ -29,7 +29,7 @@ module Fission
       #
       # @param args [Hash]
       def connect!(args=Hash.new)
-        unless(Thread.current[:db])
+        unless($dbcon)
           if(args.empty? || args[:file])
             args = connection_arguments(args[:file])
           end
@@ -38,7 +38,10 @@ module Fission
           Sequel.extension :pg_json
           Sequel.extension :pg_json_ops
           Sequel.extension :migration
-          db = Thread.current[:db] = Sequel.connect(args)
+          if(RUBY_PLATFORM == 'java')
+            args = "jdbc:#{args[:adapter]}://#{args[:host]}/#{args[:database]}?user=#{args[:user]}&password=#{args[:password]}"
+          end
+          $dbcon = db = Sequel.connect(args)
           db.extension :pagination
           migrate!(db)
         end
