@@ -9,9 +9,9 @@ Gem::Specification.new do |s|
   s.homepage = 'http://github.com/heavywater/fission-data'
   s.description = 'Fission Core'
   s.require_path = 'lib'
-  s.add_dependency 'risky' # TODO: add version peg
   s.add_dependency 'hashie'
   s.add_dependency 'sequel'
-  s.add_dependency 'pg'
+  #  s.add_dependency 'pg'  NOTE: we should split specs for java / ruby
+  #  like carnivore-rabbitmq does
   s.files = Dir['**/*']
 end
