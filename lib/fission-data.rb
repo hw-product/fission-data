@@ -62,8 +62,20 @@ module Fission
         path = [path, ENV['FISSION_DATA_CONFIG'] || FISSION_DATA_CONFIG].detect do |test_path|
           File.exists?(test_path.to_s)
         end
-        raise 'Failed to discover valid path for database connection configuration!' unless path
-        MultiJson.load(File.read(path), :symbolize_keys => true)
+        default_args = {
+          :adapter => RUBY_PLATFORM == 'java' ? 'postgresql' : 'postgres',
+          :database => 'fission',
+          :host => 'localhost',
+          :user => 'fission',
+          :password => 'fission-password'
+        }
+        if(path)
+          default_args.merge(
+            MultiJson.load(File.read(path), :symbolize_keys => true)
+          )
+        else
+          default_args
+        end
       end
 
     end
