@@ -104,6 +104,7 @@ Sequel.migration do
       String :name, :null => false
       String :url, :null => false
       String :clone_url
+      String :remote_id
       TrueClass :private, :null => false, :default => true
       DateTime :updated_at
       DateTime :created_at
