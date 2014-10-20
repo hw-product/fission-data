@@ -7,9 +7,9 @@ module Fission
       # Authentication tokens
       class Token < Sequel::Model
 
-        many_to_one :user, :class => User
-        many_to_one :account, :class => Account
-        many_to_many :permissions, :class => Permission, :right_key => :permission_id, :join_table => 'permissions_tokens'
+        many_to_one :user
+        many_to_one :account
+        many_to_many :permissions
 
         # Validate instance attributes
         def validate
