@@ -14,8 +14,7 @@ module Fission
           #
           # @return [Sequel::Dataset]
           def dataset_with_router
-            base_set = db["select * from (select j.*, string_to_array(string_agg(trim(elm::text, '\"'), ','), ',') as router from jobs j, json_array_elements(j.payload->'data'->'router') payload(elm) group by 1) _j"]
-            self.dataset.from(base_set)
+            dataset_with(:collections => {:router => ['data', 'router']})
           end
 
           # Provide model dataset with `complete` unpacked from
@@ -23,7 +22,35 @@ module Fission
           #
           # @return [Sequel::Dataset]
           def dataset_with_complete
-            base_set = db["select * from (select j.*, string_to_array(string_agg(trim(elm::text, '\"'), ','), ',') as complete from jobs j, json_array_elements(j.payload->'complete') payload(elm) group by 1) _j"]
+            dataset_with(:collections => {:complete => ['complete']})
+          end
+
+          # Construct customized dataset with JSON attributes extracted
+          #
+          # @param hash [Hash] query options
+          # @option hash [Hash] :collections - {:alias_key => ['path', 'to', 'collection']
+          # @option hash [Hash] :scalars - {:alias_key => ['path', 'to', 'scalar']
+          # @return [Sequel::Dataset]
+          # @note only one collection can be provided at this time
+          def dataset_with(hash={})
+            collections = hash.fetch(:collections, {})
+            scalars = hash.fetch(:scalars, {})
+            raise ArgumentError.new "Only one item allowed with `:collections`" if collections.size > 1
+            customs = [["jobs.*", "jobs"]]
+            customs += collections.map do |key, location|
+              [
+                "string_to_array(string_agg(trim(elm::text, '\"'), ','), ',') as #{key}",
+                "json_array_elements(jobs.payload->'#{location.join("'->'")}') payload(elm)"
+              ]
+            end
+            customs += scalars.map do |key, location|
+              location = ['payload'] + location
+              [
+                [location.first, location.slice(1, location.size - 2).map{|x| "'#{x}'"}].flatten.compact.join('->') << "->>'#{location.last}' as #{key}",
+                nil
+              ]
+            end
+            base_set = db["select * from (select #{customs.map(&:first).join(', ')} from #{customs.map(&:last).compact.join(', ')} group by jobs.id) _j"]
             self.dataset.from(base_set)
           end
 
