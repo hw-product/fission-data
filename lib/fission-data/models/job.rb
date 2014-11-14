@@ -7,6 +7,28 @@ module Fission
       # Job metadata
       class Job < Sequel::Model
 
+        class << self
+
+          # Provide model dataset with `router` unpacked from
+          # the payload JSON and available for query
+          #
+          # @return [Sequel::Dataset]
+          def dataset_with_router
+            base_set = db["select * from (select j.*, string_to_array(string_agg(trim(elm::text, '\"'), ','), ',') as router from jobs j, json_array_elements(j.payload->'data'->'router') payload(elm) group by 1) _j"]
+            self.dataset.from(base_set)
+          end
+
+          # Provide model dataset with `complete` unpacked from
+          # the payload JSON and available for query
+          #
+          # @return [Sequel::Dataset]
+          def dataset_with_complete
+            base_set = db["select * from (select j.*, string_to_array(string_agg(trim(elm::text, '\"'), ','), ',') as complete from jobs j, json_array_elements(j.payload->'complete') payload(elm) group by 1) _j"]
+            self.dataset.from(base_set)
+          end
+
+        end
+
         self.add_pg_typecast_on_load_columns :payload
 
         many_to_one :account
