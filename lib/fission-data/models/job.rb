@@ -14,7 +14,7 @@ module Fission
           #
           # @return [Sequel::Dataset]
           def dataset_with_router
-            dataset_with(:collections => {:router => ['data', 'router']})
+            dataset_with(:collections => {:router => ['data', 'router', 'route']})
           end
 
           # Provide model dataset with `complete` unpacked from
@@ -36,7 +36,7 @@ module Fission
             collections = hash.fetch(:collections, {})
             scalars = hash.fetch(:scalars, {})
             raise ArgumentError.new "Only one item allowed with `:collections`" if collections.size > 1
-            customs = [["jobs.*", "jobs"]]
+            customs = [["jobs.*", "jobs as jobs"]]
             customs += collections.map do |key, location|
               [
                 "string_to_array(string_agg(trim(elm::text, '\"'), ','), ',') as #{key}",
@@ -50,8 +50,7 @@ module Fission
                 nil
               ]
             end
-            base_set = db["select * from (select #{customs.map(&:first).join(', ')} from #{customs.map(&:last).compact.join(', ')} group by jobs.id) _j"]
-            self.dataset.from(base_set)
+            self.dataset.from(Sequel.lit("(select #{customs.map(&:first).join(', ')} from #{customs.map(&:last).compact.join(', ')} group by jobs.id) jobs"))
           end
 
         end
