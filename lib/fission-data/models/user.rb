@@ -78,11 +78,15 @@ module Fission
         end
 
         # @return [Array<Account>] all accounts
-        def accounts
-          [self.owned_accounts,
-            self.member_accounts,
+        def accounts(*args)
+          _accounts = [
+            self.owned_accounts,
             self.managed_accounts
-          ].flatten.compact
+          ]
+          unless(args.include?(:all))
+            _accounts << self.member_accounts
+          end
+          _accounts.flatten.compact
         end
 
         # OAuth token for a provider
