@@ -9,6 +9,7 @@ module Fission
 
         many_to_one :product
         many_to_many :permissions
+        many_to_many :accounts
 
         # Validate account attributes
         def validate
