@@ -187,6 +187,7 @@ Sequel.migration do
       String :content, :null => false
       String :title, :null => false
       String :path, :null => false
+      String :style, :null => false, :default => 'haml'
       DateTime :updated_at
       DateTime :created_at
       foreign_key :product_id, :null => false
