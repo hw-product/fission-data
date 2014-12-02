@@ -89,6 +89,11 @@ module Fission
           ).uniq
         end
 
+        # @return [Array<Fission::Data::Models::Product>]
+        def products
+          product_features.map(&:product).uniq
+        end
+
         # User is owner of this account
         #
         # @param user [User]

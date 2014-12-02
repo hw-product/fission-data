@@ -148,13 +148,6 @@ module Fission
           active_session
         end
 
-
-        # @return [Array<Fission::Data::Models::Product>]
-        def active_products
-          accounts.map(&:product_features).flatten.uniq.
-            map(&:product).uniq
-        end
-
         class << self
 
           # Attempt to locate user and authenticate via password
