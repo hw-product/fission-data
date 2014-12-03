@@ -175,14 +175,6 @@ Sequel.migration do
 
     create_join_table(:log_entry_id => :log_entries, :tag_id => :tags)
 
-    create_table(:whitelists) do
-      String :username, :null => false
-      DateTime :updated_at
-      DateTime :created_at
-      foreign_key :creator_id, :null => false
-      primary_key :id
-    end
-
     create_table(:static_pages) do
       String :content, :null => false
       String :title, :null => false

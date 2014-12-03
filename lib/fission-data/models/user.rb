@@ -18,7 +18,6 @@ module Fission
         one_to_many :identities
         many_to_one :source
         one_to_many :tokens
-        one_to_many :whitelists, :key => :creator_id
 
         # Create new instance
         # @note used for run_state initializaiton
