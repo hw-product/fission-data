@@ -106,7 +106,11 @@ module Fission
         # @return [Account]
         def create_account(name=nil)
           if(owned_accounts.empty?)
-            source = Source.find_or_create(:name => 'internal')
+            if(default_identity)
+              source = Source.find_or_create(:name => default_identity.provider)
+            else
+              source = Source.find_or_create(:name => 'internal')
+            end
             add_owned_account(
               :name => name || username,
               :source_id => source.id
