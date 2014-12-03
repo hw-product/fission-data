@@ -9,6 +9,19 @@ module Fission
 
         class << self
 
+          # Provide dataset consisting of only the latest entries for
+          # a given job (`message_id`)
+          #
+          # @return [Sequel::Dataset]
+          def current_dataset
+            Job.where(
+              :id => Job.dataset.join_table(:left, :jobs___j2) do |j2, j|
+                ({Sequel.qualify(j, :message_id) => Sequel.qualify(j2, :message_id)}) &
+                  (Sequel.qualify(j, :created_at) < Sequel.qualify(j2, :created_at))
+              end.where(:j2__id => nil).select(:jobs__id)
+            )
+          end
+
           # Provide model dataset with `router` unpacked from
           # the payload JSON and available for query
           #
