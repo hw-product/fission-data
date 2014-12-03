@@ -9,7 +9,7 @@ Rails.application.config.before_initialize do
     permission = feature.add_permission(:name => 'fission-admin', :pattern => 'admin/.*')
     user = source.add_user(:username => 'fission-default-admin')
     user.add_whitelist(:username => 'fission-default-admin')
-    user.accounts.first.add_permission(permission)
+    user.accounts.first.add_product_feature(feature)
   end
 
 end
