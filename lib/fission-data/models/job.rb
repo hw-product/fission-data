@@ -15,11 +15,21 @@ module Fission
           # @return [Sequel::Dataset]
           def current_dataset
             Job.where(
-              :id => Job.dataset.join_table(:left, :jobs___j2) do |j2, j|
-                ({Sequel.qualify(j, :message_id) => Sequel.qualify(j2, :message_id)}) &
-                  (Sequel.qualify(j, :created_at) < Sequel.qualify(j2, :created_at))
-              end.where(:j2__id => nil).select(:jobs__id)
+              :id => current_dataset_ids
             )
+          end
+
+          # Provide dataset consisting of IDs of only latest entries
+          # for a given job (`message_id`)
+          #
+          # @return [Sequel::Dataset]
+          # @note this only returns `:id` in the dataset. if you are
+          #   looking for a real dataset, use `Job.current_dataset`
+          def current_dataset_ids
+            Job.dataset.join_table(:left, :jobs___j2) do |j2, j|
+              ({Sequel.qualify(j, :message_id) => Sequel.qualify(j2, :message_id)}) &
+                (Sequel.qualify(j, :created_at) < Sequel.qualify(j2, :created_at))
+            end.where(:j2__id => nil).select(:jobs__id)
           end
 
           # Provide model dataset with `router` unpacked from
@@ -27,7 +37,7 @@ module Fission
           #
           # @return [Sequel::Dataset]
           def dataset_with_router
-            dataset_with(:collections => {:router => ['data', 'router', 'route']})
+            dataset_with(:collections => {:router => ['data', 'router', 'route']}).where(:id => current_dataset_ids)
           end
 
           # Provide model dataset with `complete` unpacked from
@@ -35,7 +45,7 @@ module Fission
           #
           # @return [Sequel::Dataset]
           def dataset_with_complete
-            dataset_with(:collections => {:complete => ['complete']})
+            dataset_with(:collections => {:complete => ['complete']}).where(:id => current_dataset_ids)
           end
 
           # Construct customized dataset with JSON attributes extracted
@@ -63,7 +73,7 @@ module Fission
                 nil
               ]
             end
-            self.dataset.from(Sequel.lit("(select #{customs.map(&:first).join(', ')} from #{customs.map(&:last).compact.join(', ')} group by jobs.id) jobs"))
+            self.dataset.from(Sequel.lit("(select #{customs.map(&:first).join(', ')} from #{customs.map(&:last).compact.join(', ')} group by jobs.id) jobs")).where(:id => current_dataset_ids)
           end
 
         end
