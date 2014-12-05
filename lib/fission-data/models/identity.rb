@@ -1,4 +1,5 @@
 require 'fission-data'
+require 'securerandom'
 
 module Fission
   module Data
@@ -33,10 +34,12 @@ module Fission
           unless(self.values[:credentials])
             self.values[:credentials] = {}
           end
+          random_sec = 3.times.map{ SecureRandom.urlsafe_base64 }.join
+          self.user.run_state.random_sec = random_sec
           self.credentials = Utils::Cipher.encrypt(
             JSON.dump(self[:credentials]),
-            :key => [SALTER, self.user.username, self.user.session.get(:login_time).to_s].join(SALTER_JOINER),
-            :iv => self.user.session.get(:login_time).to_s
+            :key => [SALTER, self.user.username, self.user.run_state.random_sec].join(SALTER_JOINER),
+            :iv => self.user.run_state.random_sec
           )
           self.extras = Sequel.pg_json(self.extras)
           self.infos = Sequel.pg_json(self.infos)
@@ -69,9 +72,9 @@ module Fission
                 Utils::Cipher.decrypt(
                   self.values[:credentials],
                   :key => [
-                    SALTER, self.user.username, self.user.session.get(:login_time)
+                    SALTER, self.user.username, self.user.run_state.random_sec
                   ].join(SALTER_JOINER),
-                  :iv => self.user.session.get(:login_time).to_s
+                  :iv => self.user.run_state.random_sec
                 )
               )
             )
