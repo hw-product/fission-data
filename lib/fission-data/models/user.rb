@@ -107,6 +107,8 @@ module Fission
           if(owned_accounts.empty?)
             if(default_identity)
               source = Source.find_or_create(:name => default_identity.provider)
+            elsif(run_state.identity_provider)
+              source = Source.find_or_create(:name => run_state.identity_provider)
             else
               source = Source.find_or_create(:name => 'internal')
             end

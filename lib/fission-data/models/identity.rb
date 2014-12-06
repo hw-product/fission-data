@@ -152,6 +152,7 @@ module Fission
               user = User.find_by_username(username)
               unless(user)
                 user = User.new(:username => username)
+                user.run_state.identity_provider = attributes[:provider]
                 user.source = source if source
                 user.save
               end
