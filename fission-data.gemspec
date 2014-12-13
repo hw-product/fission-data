@@ -11,7 +11,6 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.add_dependency 'hashie'
   s.add_dependency 'sequel'
-  s.add_dependency 'pg' #  NOTE: we should split specs for java / ruby
-  #  like carnivore-rabbitmq does
+  s.add_dependency 'pg'
   s.files = Dir['{lib}/**/**/*'] + %w(fission-data.gemspec README.md CHANGELOG.md)
 end
