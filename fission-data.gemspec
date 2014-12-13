@@ -1,6 +1,6 @@
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__)) + '/lib/'
 require 'fission-data/version'
-Gem::Specification.new do |s|
+spec = Gem::Specification.new do |s|
   s.name = 'fission-data'
   s.version = Fission::Data::VERSION.version
   s.summary = 'Fission Data'
