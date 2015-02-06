@@ -80,7 +80,6 @@ module Fission
             )
             res
           rescue => e
-            Rails.logger.warn "Failed loading credentials. #{e.class}: #{e}"
             nil
           end
         end
