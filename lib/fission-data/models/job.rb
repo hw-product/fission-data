@@ -105,14 +105,18 @@ module Fission
 
         # @return [Symbol] current job status
         def status
-          if(self.payload[:error])
-            :error
-          else
-            if(self.payload.fetch(:complete, []).include?(self.payload[:job]))
-              :complete
+          unless(self.values[:status])
+            if(self.payload[:error])
+              :error
             else
-              :in_progress
+              if(self.payload.fetch(:complete, []).include?(self.payload[:job]))
+                :complete
+              else
+                :in_progress
+              end
             end
+          else
+            self.values[:status].to_sym
           end
         end
 
