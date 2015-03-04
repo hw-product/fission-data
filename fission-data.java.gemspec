@@ -1,4 +1,4 @@
-if(RUBY_PLATFORM == 'java')
+if(RUBY_PLATFORM == 'java' || ENV['BUILD_JAVA'])
   spec = eval File.read(File.expand_path(File.join(File.dirname(__FILE__), 'fission-data.gemspec')))
   spec.platform = 'java'
   spec.dependencies.delete_if do |dep|
