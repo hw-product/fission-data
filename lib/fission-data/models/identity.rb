@@ -38,7 +38,11 @@ module Fission
           self.user.run_state.random_sec = random_sec
           self.credentials = Utils::Cipher.encrypt(
             JSON.dump(self[:credentials]),
-            :key => [SALTER, self.user.username, self.user.run_state.random_sec].join(SALTER_JOINER),
+            :key => [
+              SALTER,
+              self.user.username,
+              self.user.run_state.random_sec
+            ].join(SALTER_JOINER),
             :iv => self.user.run_state.random_sec
           )
           self.extras = Sequel.pg_json(self.extras)
