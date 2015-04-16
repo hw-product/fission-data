@@ -8,7 +8,7 @@ module Fission
       class ServiceGroup < Sequel::Model
 
         many_to_many :product_features
-        many_to_many :services
+        many_to_many :services, :order => :position
 
         # Validate instance attributes
         def validate
