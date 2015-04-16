@@ -8,18 +8,24 @@ module Fission
       class AccountConfig < Sequel::Model
 
         many_to_one :account
+        many_to_one :service
 
         # Validate instance attributes
         def validate
           super
-          validates_presence [:service_name, :data, :account_id]
-          validates_unique [:service_name, :account_id]
+          validates_presence [:service_id, :data, :account_id]
+          validates_unique [:service_id, :account_id]
         end
 
         def before_save
           super
           self.extras ||= {}
           self.extras = Sequel.pg_json(self.extras)
+        end
+
+        # @return [String]
+        def service_name
+          self.service.name
         end
 
         # @return [Fission::Utils::Smash]
