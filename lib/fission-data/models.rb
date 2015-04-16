@@ -134,6 +134,7 @@ module Fission
     module Models
 
       autoload :Account, 'fission-data/models/account'
+      autoload :AccountConfig, 'fission-data/models/account_config'
       autoload :CustomerPayment, 'fission-data/models/customer_payment'
       autoload :Identity, 'fission-data/models/identity'
       autoload :Job, 'fission-data/models/job'

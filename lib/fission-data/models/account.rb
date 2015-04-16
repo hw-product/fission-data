@@ -16,6 +16,7 @@ module Fission
         one_to_many :tokens
         one_to_many :customer_payments
         one_to_many :logs
+        one_to_many :account_configs
         many_to_one :source
         many_to_many :product_features
 
@@ -24,6 +25,7 @@ module Fission
           super
           self.remove_all_owners
           self.remove_all_members
+          self.remove_all_account_configs
         end
 
         # Validate account attributes
