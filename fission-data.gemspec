@@ -11,6 +11,11 @@ spec = Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.add_dependency 'hashie'
   s.add_dependency 'sequel'
-  s.add_dependency 'pg'
+  if(RUBY_PLATFORM == 'java' || ENV['BUILD_JAVA'])
+    s.platform = 'java'
+    s.add_runtime_dependency 'jdbc-postgres'
+  else
+    s.add_runtime_dependency 'pg'
+  end
   s.files = Dir['{lib}/**/**/*'] + %w(fission-data.gemspec README.md CHANGELOG.md)
 end
