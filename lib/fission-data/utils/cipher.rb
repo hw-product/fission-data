@@ -10,6 +10,13 @@ module Fission
 
         class << self
 
+          # Salt for key generation
+          CRYPT_SALT='fission~crypt~salt'
+          # Computation iteration length
+          CRYPT_ITER=10000
+          # Length of generated key
+          CRYPT_KEY_LENGTH=32
+
           # Encrypt string
           #
           # @param string [String] string to encrypt
@@ -46,11 +53,15 @@ module Fission
           def build_cipher(args={})
             cipher = OpenSSL::Cipher.new('AES-256-CBC')
             args[:decrypt] ? cipher.decrypt : cipher.encrypt
-            [:key, :iv].each do |k|
-              if(args[k])
-                cipher.send("#{k}=", args[k])
-              end
+            iv = args[:iv]
+            until(iv.length > 65)
+              iv = iv * 2
             end
+            key = OpenSSL::PKCS5.pbkdf2_hmac_sha1(
+              args[:key], CRYPT_SALT, CRYPT_ITER, CRYPT_KEY_LENGTH
+            )
+            cipher.iv = iv
+            cipher.key = key
             cipher
           end
 
