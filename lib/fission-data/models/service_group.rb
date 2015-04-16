@@ -21,6 +21,11 @@ module Fission
           super
         end
 
+        # @return [Array<String>]
+        def route
+          self.services.map(&:name)
+        end
+
       end
     end
   end
