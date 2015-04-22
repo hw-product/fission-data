@@ -93,7 +93,7 @@ module Fission
 
         # @return [Array<Fission::Data::Models::Service>]
         def services
-          product_features.map(&:services).uniq
+          product_features.map(&:services).flatten.compact.uniq
         end
 
         # @return [Array<Fission::Data::Models::Product>]
