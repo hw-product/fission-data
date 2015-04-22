@@ -13,7 +13,7 @@ module Fission
         # Validate instance attributes
         def validate
           super
-          validates_presence [:service_id, :data, :account_id]
+          validates_presence [:service_id, :account_id]
           validates_unique [:service_id, :account_id]
         end
 
