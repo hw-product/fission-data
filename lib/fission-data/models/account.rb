@@ -19,6 +19,7 @@ module Fission
         one_to_many :account_configs
         many_to_one :source
         many_to_many :product_features
+        one_to_many :routes
 
         # Scrub associations prior to destruction
         def before_destroy
