@@ -54,8 +54,16 @@ module Fission
           self.reload.service_groups
         end
 
-        # @return [Array<String>]
-        def route
+        # Check if account has access to services and service groups
+        # defined within this route
+        #
+        # @return [TrueClass, FalseClass]
+        def valid?
+          (route_services.map(&:product_features).flatten.compact - account.product_features).empty?
+        end
+
+        # @return [Array<Service>]
+        def route_services
           generated_route = []
           db[:routes_services].all.each do |srv_info|
             generated_route.insert(
@@ -69,11 +77,16 @@ module Fission
           end
           generated_route.compact.map do |item|
             if(item.respond_to?(:services))
-              item.services.map(&:name)
+              item.services
             else
-              item.name
+              item
             end
           end.flatten.compact
+        end
+
+        # @return [Array<String>] routing path
+        def route
+          route_services.map(&:name)
         end
 
       end
