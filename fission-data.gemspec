@@ -11,7 +11,7 @@ spec = Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.add_runtime_dependency 'hashie'
   s.add_runtime_dependency 'sequel'
-  s.add_runtime_dependency 'fission'
+  s.add_runtime_dependency 'fission', '>= 0.1.5'
   if(RUBY_PLATFORM == 'java' || ENV['BUILD_JAVA'])
     s.platform = 'java'
     s.add_runtime_dependency 'jdbc-postgres'
