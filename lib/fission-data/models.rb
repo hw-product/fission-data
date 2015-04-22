@@ -146,6 +146,7 @@ module Fission
       autoload :ProductFeature, 'fission-data/models/product_feature'
       autoload :Repository, 'fission-data/models/repository'
       autoload :Service, 'fission-data/models/service'
+      autoload :ServiceConfigItem, 'fission-data/models/service_config_item'
       autoload :Session, 'fission-data/models/session'
       autoload :Source, 'fission-data/models/source'
       autoload :StaticPage, 'fission-data/models/static_page'
