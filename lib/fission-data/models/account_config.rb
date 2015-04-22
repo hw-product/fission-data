@@ -19,8 +19,8 @@ module Fission
 
         def before_save
           super
-          self.extras ||= {}
-          self.extras = Sequel.pg_json(self.extras)
+          self.data ||= {}
+          self.data = Sequel.pg_json(self.data)
         end
 
         # @return [String]
