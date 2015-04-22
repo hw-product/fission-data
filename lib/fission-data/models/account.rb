@@ -91,6 +91,11 @@ module Fission
           ).uniq
         end
 
+        # @return [Array<Fission::Data::Models::Service>]
+        def services
+          product_features.map(&:services).uniq
+        end
+
         # @return [Array<Fission::Data::Models::Product>]
         def products
           product_features.map(&:product).uniq
