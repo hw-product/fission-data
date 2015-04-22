@@ -4,12 +4,16 @@ Sequel.migration do
     create_table(:services) do
       String :name, :null => false, :unique => true
       String :description
+      DateTime :updated_at
+      DateTime :created_at
       primary_key :id
     end
 
     create_table(:service_groups) do
       String :name, :null => false, :unique => true
       String :description
+      DateTime :updated_at
+      DateTime :created_at
       primary_key :id
     end
 
@@ -37,6 +41,8 @@ Sequel.migration do
 
     create_table(:service_config_items) do
       String :name, :null => false
+      DateTime :updated_at
+      DateTime :created_at
       primary_key :id
       foreign_key :service_id, :null => false
       index [:service_id, :name], :unique => true
@@ -44,6 +50,8 @@ Sequel.migration do
 
     create_table(:account_configs) do
       column :data, :json
+      DateTime :updated_at
+      DateTime :created_at
       foreign_key :service_id, :null => false
       foreign_key :account_id, :null => false
       primary_key :id
