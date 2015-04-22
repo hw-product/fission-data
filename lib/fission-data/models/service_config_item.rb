@@ -7,7 +7,7 @@ module Fission
       # Backend service configurable item
       class ServiceConfigItem < Sequel::Model
 
-        belongs_to :service
+        many_to_one :service
 
         # Validate account attributes
         def validate
