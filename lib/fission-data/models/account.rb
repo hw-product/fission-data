@@ -17,6 +17,7 @@ module Fission
         one_to_many :customer_payments
         one_to_many :logs
         one_to_many :account_configs
+        one_to_many :custom_services
         many_to_one :source
         many_to_many :product_features
         one_to_many :routes
@@ -27,6 +28,7 @@ module Fission
           self.remove_all_owners
           self.remove_all_members
           self.remove_all_account_configs
+          self.delete_all_custom_services
         end
 
         # Validate account attributes
