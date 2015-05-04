@@ -19,7 +19,6 @@ module Fission
 
         def before_destroy
           super
-          self.remove_all_service_config_items
         end
 
       end
