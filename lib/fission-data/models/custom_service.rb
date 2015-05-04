@@ -8,6 +8,12 @@ module Fission
       class CustomService < Sequel::Model
 
         many_to_one :account
+        many_to_many :routes
+
+        def before_destroy
+          super
+          self.remove_all_routes
+        end
 
         def validate
           super
