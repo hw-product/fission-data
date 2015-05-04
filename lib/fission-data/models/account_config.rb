@@ -13,19 +13,14 @@ module Fission
         # Validate instance attributes
         def validate
           super
-          validates_presence [:service_id, :account_id]
-          validates_unique [:service_id, :account_id]
+          validates_presence [:name, :account_id]
+          validates_unique [:name, :account_id]
         end
 
         def before_save
           super
           self.data ||= {}
           self.data = Sequel.pg_json(self.data)
-        end
-
-        # @return [String]
-        def service_name
-          self.service.name
         end
 
         # @return [Fission::Utils::Smash]
