@@ -7,7 +7,7 @@ Sequel.migration do
       TrueClass :enabled, :null => false, :default => true
       foreign_key :account_id, :null => false
       primary_key :id
-      add_index [:name, :account_id], :unique => true
+      index [:name, :account_id], :unique => true
     end
 
   end
