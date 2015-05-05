@@ -312,15 +312,14 @@ Sequel.migration do
       primary_key :id
     end
 
-    create_join_table(:account_config_id => :account_configs, :route_config_id => :route_configs)
     create_join_table(:payload_matcher_id => :payload_matchers, :route_config_id => :route_configs)
 
-    create_table(:account_configs_routes) do
+    create_table(:account_configs_route_configs) do
       foreign_key :account_config_id, :null => false
-      foreign_key :route_id, :null => false
+      foreign_key :route_config_id, :null => false
       Integer :position, :null => false
-      primary_key [:account_config_id, :route_id]
-      index [:route_id, :account_config_id, :position], :unique => true
+      primary_key [:account_config_id, :route_config_id]
+      index [:route_config_id, :account_config_id, :position], :unique => true
     end
 
   end
