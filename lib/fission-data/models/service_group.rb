@@ -7,6 +7,7 @@ module Fission
       # Grouping of services
       class ServiceGroup < Sequel::Model
 
+        one_to_many :products
         many_to_many :product_features
         many_to_many :services, :order => :position
 
@@ -19,6 +20,8 @@ module Fission
 
         def before_destroy
           super
+          self.remove_all_product_features
+          self.remove_all_services
         end
 
         # @return [Array<String>]

@@ -11,6 +11,7 @@ module Fission
         one_to_many :product_features
         many_to_many :repositories
         one_to_many :static_pages
+        many_to_one :service_group
 
         # Validate account attributes
         def validate
