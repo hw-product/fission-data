@@ -9,6 +9,7 @@ module Fission
 
         many_to_one :account
         many_to_one :service
+        many_to_many :route_configs
 
         # Validate instance attributes
         def validate
@@ -21,6 +22,11 @@ module Fission
           super
           self.data ||= {}
           self.data = Sequel.pg_json(self.data)
+        end
+
+        def before_destroy
+          super
+          self.remove_all_route_configs
         end
 
         # @return [Fission::Utils::Smash]
