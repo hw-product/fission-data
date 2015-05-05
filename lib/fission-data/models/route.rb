@@ -8,6 +8,7 @@ module Fission
       class Route < Sequel::Model
 
         many_to_one :account
+        many_to_many :route_configs
         many_to_many :custom_services, :order => :position
         many_to_many :services, :order => :position
         many_to_many :service_groups, :order => :position
@@ -24,6 +25,7 @@ module Fission
           self.remove_all_services
           self.remove_all_custom_services
           self.remove_all_service_groups
+          self.remove_all_route_configs
         end
 
         # Association create override to allow positioning
