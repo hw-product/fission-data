@@ -69,10 +69,19 @@ Sequel.migration do
     create_join_table(:permission_id => :permissions, :token_id => :tokens)
     create_join_table(:account_id => :accounts, :permission_id => :permissions)
 
+    create_table(:service_groups) do
+      String :name, :null => false, :unique => true
+      String :description
+      DateTime :updated_at
+      DateTime :created_at
+      primary_key :id
+    end
+
     create_table(:products) do
       String :name, :null => false, :unique => true
       String :internal_name, :null => false, :unique => true
       String :vanity_dns, :unique => true
+      foreign_key :service_group_id
       DateTime :updated_at
       DateTime :created_at
       primary_key :id
@@ -195,14 +204,6 @@ Sequel.migration do
       primary_key :id
     end
 
-    create_table(:service_groups) do
-      String :name, :null => false, :unique => true
-      String :description
-      DateTime :updated_at
-      DateTime :created_at
-      primary_key :id
-    end
-
     create_table(:service_groups_services) do
       Integer :position, :null => false
       foreign_key :service_group_id, :null => false
@@ -290,6 +291,36 @@ Sequel.migration do
       primary_key [:custom_service_id, :route_id]
       index [:route_id, :custom_service_id], :unique => true
       index [:route_id, :custom_service_id, :position], :unique => true
+    end
+
+    create_table(:route_configs) do
+      foreign_key :route_id, :null => false
+      primary_key :id
+    end
+
+    create_table(:payload_match_rules) do
+      String :name, :null => false, :unique => true
+      String :payload_key, :null => false, :unique => true
+      String :description
+      primary_key :id
+    end
+
+    create_table(:payload_matchers) do
+      String :value, :null => false
+      foreign_key :account_id, :null => false
+      foreign_key :payload_match_rule_id, :null => false
+      primary_key :id
+    end
+
+    create_join_table(:account_config_id => :account_configs, :route_config_id => :route_configs)
+    create_join_table(:payload_matcher_id => :payload_matchers, :route_config_id => :route_configs)
+
+    create_table(:account_configs_routes) do
+      foreign_key :account_config_id, :null => false
+      foreign_key :route_id, :null => false
+      Integer :position, :null => false
+      primary_key [:account_config_id, :route_id]
+      index [:route_id, :account_config_id, :position], :unique => true
     end
 
   end
