@@ -11,6 +11,12 @@ module Fission
         many_to_many :account_configs, :order => :position
         many_to_many :payload_matchers
 
+        def before_save
+          super
+          validates_presence :name
+          validates_unique [:name, :route_id]
+        end
+
         def before_destroy
           super
           self.remove_all_account_configs
@@ -23,7 +29,7 @@ module Fission
         # @option args [AccountConfig] :account_config
         # @option args [Integer] :position
         # @return [Array<AccountConfig>]
-        def add_service(args)
+        def add_account_config(args)
           db[:account_configs_route_configs].insert(
             :route_config_id => self.id,
             :account_config_id => args[:account_config].id,

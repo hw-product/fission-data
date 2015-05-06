@@ -294,7 +294,9 @@ Sequel.migration do
     end
 
     create_table(:route_configs) do
+      String :name, :null => false
       foreign_key :route_id, :null => false
+      index [:name, :route_id], :unique => true
       primary_key :id
     end
 

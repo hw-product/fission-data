@@ -29,6 +29,21 @@ module Fission
           self.remove_all_route_configs
         end
 
+        # Association create override to allow positioning
+        #
+        # @param args [Hash]
+        # @option args [RouteConfig] :route_config
+        # @option args [Integer] :position
+        # @return [Array<RouteConfig>]
+        def add_route_config(args)
+          db[:account_configs_route_configs].insert(
+            :route_config_id => args[:route_config].id,
+            :account_config_id => self.id,
+            :position => args[:position]
+          )
+          self.reload.route_configs
+        end
+
         # @return [Fission::Utils::Smash]
         def data
           unless(self.values[:data].is_a?(Smash))
