@@ -22,6 +22,12 @@ module Fission
         many_to_many :product_features
         one_to_many :routes
 
+        def before_save
+          super
+          self.metadata ||= {}
+          self.metadata = Sequel.pg_json(self.metadata)
+        end
+
         # Scrub associations prior to destruction
         def before_destroy
           super
@@ -110,6 +116,14 @@ module Fission
         # @return [Truthy, Falsey]
         def owner?(user)
           user == owner || owners.include?(user)
+        end
+
+        # @return [Fission::Utils::Smash]
+        def metadata
+          unless(self.values[:metadata].is_a?(Smash))
+            self.values[:metadata] = (self.values[:metadata] || {}).to_smash
+          end
+          self.values[:metadata]
         end
 
       end
