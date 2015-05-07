@@ -19,6 +19,7 @@ Sequel.migration do
     create_table(:accounts) do
       String :name, :null => false, :unique => true
       String :email
+      column :metadata, :json
       DateTime :updated_at
       DateTime :created_at
       foreign_key :user_id, :null => false
@@ -251,6 +252,7 @@ Sequel.migration do
     create_table(:routes) do
       String :name, :null => false
       String :description
+      TrueClass :enabled, :null => false, :default => true
       DateTime :updated_at
       DateTime :created_at
       foreign_key :account_id, :null => false
@@ -295,8 +297,11 @@ Sequel.migration do
 
     create_table(:route_configs) do
       String :name, :null => false
+      String :description
+      Integer :position, :null => false
       foreign_key :route_id, :null => false
       index [:name, :route_id], :unique => true
+      index [:name, :route_id, :position], :unique => true
       primary_key :id
     end
 
@@ -323,6 +328,8 @@ Sequel.migration do
       primary_key [:account_config_id, :route_config_id]
       index [:route_config_id, :account_config_id, :position], :unique => true
     end
+
+    create_join_table(:payload_matcher_id => :payload_matchers, :route_id => :routes)
 
   end
 end
