@@ -330,6 +330,6 @@ Sequel.migration do
     end
 
     create_join_table(:payload_matcher_id => :payload_matchers, :route_id => :routes)
-
+    create_join_table(:repository_id => :repositories, :route_id => :routes)
   end
 end
