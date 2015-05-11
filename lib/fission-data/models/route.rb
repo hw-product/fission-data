@@ -8,10 +8,12 @@ module Fission
       class Route < Sequel::Model
 
         many_to_one :account
-        many_to_many :route_configs
+        one_to_many :route_configs, :order => :position
         many_to_many :custom_services, :order => :position
         many_to_many :services, :order => :position
         many_to_many :service_groups, :order => :position
+        many_to_many :payload_matchers
+        many_to_many :repositories
 
         # Validate instance attributes
         def validate
@@ -25,7 +27,9 @@ module Fission
           self.remove_all_services
           self.remove_all_custom_services
           self.remove_all_service_groups
-          self.remove_all_route_configs
+          self.route_configs.map(&:destroy)
+          self.remove_all_payload_matchers
+          self.remove_all_repositories
         end
 
         # Association create override to allow positioning

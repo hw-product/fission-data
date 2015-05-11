@@ -17,7 +17,7 @@ module Fission
 
         def before_save
           super
-          validate_presence :value
+          validates_presence :value
         end
 
       end

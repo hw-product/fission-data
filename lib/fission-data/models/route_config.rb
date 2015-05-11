@@ -14,7 +14,9 @@ module Fission
         def before_save
           super
           validates_presence :name
+          validates_presence :position
           validates_unique [:name, :route_id]
+          validates_unique [:name, :route_id, :position]
         end
 
         def before_destroy

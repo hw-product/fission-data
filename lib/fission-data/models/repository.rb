@@ -9,8 +9,15 @@ module Fission
 
         self.add_pg_typecast_on_load_columns :metadata
 
-        many_to_one :account, :class => Account
+        many_to_one :account
         many_to_many :products
+        many_to_many :routes
+
+        def before_destroy
+          super
+          self.remove_all_products
+          self.remove_all_routes
+        end
 
         # Validate instance attributes
         def validate
