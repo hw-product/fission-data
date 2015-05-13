@@ -7,6 +7,8 @@ module Fission
       # Product feature
       class ProductFeature < Sequel::Model
 
+        include Utils::Pricing
+
         many_to_one :product
         many_to_many :permissions
         many_to_many :accounts
@@ -32,24 +34,6 @@ module Fission
         def before_save
           super
           self.data = Sequel.pg_json(self.data)
-        end
-
-        def price
-          if(self.prices.empty?)
-            n_price = Price.create(
-              :cost => 0,
-              :description => "Cost for product feature #{self.name}"
-            )
-            self.add_price(n_price)
-            self.reload
-            n_price
-          else
-            if(self.prices.size > 1)
-              self.prices.slice(1, self.prices.size).map(&:destroy)
-              self.reload
-            end
-            self.prices.first
-          end
         end
 
       end
