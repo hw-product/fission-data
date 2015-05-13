@@ -32,7 +32,6 @@ module Fission
             )
             if(customer)
               CustomerPayment.find_by_customer_id(customer.id) || CustomerPayment.create(
-
                 :account_id => account.id,
                 :customer_id => customer.id,
                 :type => 'stripe'
@@ -64,7 +63,12 @@ module Fission
               end
             end
           end
+        end
 
+        def before_save
+          super
+          self.remote_plans ||= {}
+          self.remote_plans = Sequel.pg_json(self.remote_plans)
         end
 
         # Validate model attributes
@@ -128,6 +132,14 @@ module Fission
             end
             @remote_data = (data || {}).to_smash
           end
+        end
+
+        # @return [Fission::Utils::Smash]
+        def remote_plans
+          unless(self.values[:remote_plans].is_a?(Smash))
+            self.values[:remote_plans] = (self.values[:remote_plans] || {}).to_smash
+          end
+          self.values[:remote_plans]
         end
 
       end
