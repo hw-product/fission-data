@@ -79,6 +79,9 @@ Sequel.migration do
       primary_key :id
     end
 
+    create_join_table(:plan_id => :plans, :service_group_id => :service_groups)
+    create_join_table(:price_id => :prices, :service_group_id => :service_groups)
+
     create_table(:products) do
       String :name, :null => false, :unique => true
       String :internal_name, :null => false, :unique => true
