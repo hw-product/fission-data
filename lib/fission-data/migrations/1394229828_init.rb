@@ -121,7 +121,6 @@ Sequel.migration do
 
     create_join_table(:plan_id => :plans, :price_id => :prices)
     create_join_table(:price_id => :prices, :product_feature_id => :product_features)
-    create_join_table(:price_id => :prices, :service_id => :services)
 
     create_table(:repositories) do
       String :name, :null => false
@@ -217,6 +216,8 @@ Sequel.migration do
       DateTime :created_at
       primary_key :id
     end
+
+    create_join_table(:price_id => :prices, :service_id => :services)
 
     create_table(:service_groups_services) do
       Integer :position, :null => false
