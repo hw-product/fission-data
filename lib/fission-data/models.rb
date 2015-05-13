@@ -145,6 +145,7 @@ module Fission
       autoload :PayloadMatchRule, 'fission-data/models/payload_match_rule'
       autoload :Permission, 'fission-data/models/permission'
       autoload :Plan, 'fission-data/models/plan'
+      autoload :Price, 'fission-data/models/price'
       autoload :Product, 'fission-data/models/product'
       autoload :ProductFeature, 'fission-data/models/product_feature'
       autoload :Repository, 'fission-data/models/repository'

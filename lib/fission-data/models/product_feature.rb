@@ -12,6 +12,7 @@ module Fission
         many_to_many :accounts
         many_to_many :services
         many_to_many :service_groups
+        many_to_many :prices
 
         # Validate account attributes
         def validate
@@ -25,6 +26,7 @@ module Fission
           self.remove_all_accounts
           self.remove_all_permissions
           self.remove_all_services
+          self.prices.map(&:destroy)
         end
 
         def before_save
