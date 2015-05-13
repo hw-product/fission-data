@@ -9,7 +9,7 @@ module Fission
         # @return [Fission::Data::Models::Price]
         def price
           if(self.prices.empty?)
-            n_price = Price.create(
+            n_price = Fission::Data::Models::Price.create(
               :cost => 0,
               :description => "Cost for service #{self.name}"
             )
