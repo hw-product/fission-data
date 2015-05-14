@@ -65,7 +65,6 @@ Sequel.migration do
       DateTime :updated_at
       DateTime :created_at
       primary_key :id
-      foreign_key :product_feature_id
     end
 
     create_join_table(:permission_id => :permissions, :token_id => :tokens)
@@ -79,7 +78,6 @@ Sequel.migration do
       primary_key :id
     end
 
-    create_join_table(:plan_id => :plans, :service_group_id => :service_groups)
     create_join_table(:price_id => :prices, :service_group_id => :service_groups)
 
     create_table(:products) do
@@ -113,6 +111,8 @@ Sequel.migration do
       DateTime :created_at
       primary_key :id
     end
+
+    create_join_table(:plan_id => :plans, :product_id, :products)
 
     create_table(:prices) do
       Integer :cost, :null => false

@@ -9,11 +9,11 @@ module Fission
         include Utils::Pricing
 
         many_to_many :prices
-        many_to_many :service_groups
+        many_to_many :products
 
         def before_destroy
           super
-          self.remove_all_service_groups
+          self.remove_all_products
           self.prices.map(&:destroy)
         end
 

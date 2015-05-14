@@ -7,11 +7,11 @@ module Fission
       # Product
       class Product < Sequel::Model
 
-        one_to_many :permissions
         one_to_many :product_features
-        many_to_many :repositories
         one_to_many :static_pages
         many_to_one :service_group
+        many_to_many :repositories
+        many_to_many :plans
 
         # Validate account attributes
         def validate
@@ -29,6 +29,13 @@ module Fission
           super
           self.internal_name = self.internal_name.to_s.
             gsub(/[^a-zA-Z0-9_]/, '_').downcase
+        end
+
+        def before_destroy
+          super
+          self.remove_all_plans
+          self.remove_all_repositories
+          self.product_features(&:destroy)
         end
 
       end

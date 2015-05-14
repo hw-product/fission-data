@@ -25,6 +25,7 @@ module Fission
           super
           self.remove_all_product_features
           self.remove_all_services
+          self.prices.map(&:destroy)
         end
 
         # @return [Array<String>]
