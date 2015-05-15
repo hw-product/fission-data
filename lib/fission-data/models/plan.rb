@@ -19,8 +19,8 @@ module Fission
 
         def validate
           super
-          validates_presence :remote_id
-          validates_unique :remote_id
+          validates_presence :name
+          validates_unique :name
         end
 
         # Generate cost of plan. If no cost has been set, the cost
