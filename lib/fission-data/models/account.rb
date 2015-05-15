@@ -107,7 +107,8 @@ module Fission
 
         # @return [Array<Fission::Data::Models::Product>]
         def products
-          product_features.map(&:product).uniq
+          (product_features.map(&:product) +
+            customer_payments.map(&:plans).map(&:product).compact).uniq
         end
 
         # User is owner of this account

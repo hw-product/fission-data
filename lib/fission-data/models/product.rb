@@ -11,13 +11,13 @@ module Fission
         one_to_many :static_pages
         many_to_one :service_group
         many_to_many :repositories
-        many_to_many :plans
+        one_to_many :plans
 
         # Validate account attributes
         def validate
           super
           unless(self.internal_name)
-            self.internal_name = self.name.dup
+            self.internal_name = Bogo::Utility.snake(self.name.dup).tr(' ', '_')
           end
           validates_presence [:name, :internal_name]
           validates_unique :name
@@ -33,8 +33,8 @@ module Fission
 
         def before_destroy
           super
-          self.remove_all_plans
           self.remove_all_repositories
+          self.plans.map(&:destroy)
           self.product_features(&:destroy)
         end
 
