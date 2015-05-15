@@ -45,8 +45,9 @@ Sequel.migration do
     create_table(:customer_payments) do
       String :customer_id, :null => false
       String :type, :null => false
-      column :remote_plans, :json
       foreign_key :account_id, :null => false
+      primary_key :id
+      index [:account_id, :type], :unique => true
     end
 
     create_table(:tokens) do
@@ -107,10 +108,11 @@ Sequel.migration do
       String :description
       DateTime :updated_at
       DateTime :created_at
+      foreign_key :product_id
       primary_key :id
     end
 
-    create_join_table(:plan_id => :plans, :product_id => :products)
+    create_join_table(:plan_id => :plans, :product_feature_id => :product_features)
 
     create_table(:prices) do
       Integer :cost, :null => false
