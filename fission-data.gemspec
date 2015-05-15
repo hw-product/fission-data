@@ -9,6 +9,7 @@ spec = Gem::Specification.new do |s|
   s.homepage = 'http://github.com/heavywater/fission-data'
   s.description = 'Fission Core'
   s.require_path = 'lib'
+  s.add_runtime_dependency 'bogo'
   s.add_runtime_dependency 'hashie'
   s.add_runtime_dependency 'sequel'
   s.add_runtime_dependency 'fission', '>= 0.1.5'
