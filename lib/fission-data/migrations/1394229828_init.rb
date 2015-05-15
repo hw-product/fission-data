@@ -78,8 +78,6 @@ Sequel.migration do
       primary_key :id
     end
 
-    create_join_table(:price_id => :prices, :service_group_id => :service_groups)
-
     create_table(:products) do
       String :name, :null => false, :unique => true
       String :internal_name, :null => false, :unique => true
@@ -104,7 +102,7 @@ Sequel.migration do
     create_join_table(:account_id => :accounts, :product_feature_id => :product_features)
 
     create_table(:plans) do
-      String :remote_id, :null => false, :unique => true
+      String :name, :null => false, :unique => true
       String :summary
       String :description
       DateTime :updated_at
@@ -112,7 +110,7 @@ Sequel.migration do
       primary_key :id
     end
 
-    create_join_table(:plan_id => :plans, :product_id, :products)
+    create_join_table(:plan_id => :plans, :product_id => :products)
 
     create_table(:prices) do
       Integer :cost, :null => false
@@ -122,6 +120,7 @@ Sequel.migration do
       primary_key :id
     end
 
+    create_join_table(:price_id => :prices, :service_group_id => :service_groups)
     create_join_table(:plan_id => :plans, :price_id => :prices)
     create_join_table(:price_id => :prices, :product_feature_id => :product_features)
 
