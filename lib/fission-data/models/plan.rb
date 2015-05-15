@@ -9,11 +9,12 @@ module Fission
         include Utils::Pricing
 
         many_to_many :prices
-        many_to_many :products
+        many_to_one :product
+        many_to_many :product_features
 
         def before_destroy
           super
-          self.remove_all_products
+          self.remove_all_product_features
           self.prices.map(&:destroy)
         end
 
@@ -32,7 +33,8 @@ module Fission
           if(raw_cost > 0)
             _cost = raw_cost
           else
-            _cost = service_groups.map{|sg| sg.generated_cost(:integer)}.inject(&:+).to_i
+            _cost = product.service_group.generated_cost(:integer) +
+              product_features.map{|pf| pf.generated_cost(:integer) }.inject(&:+).to_i
           end
           _cost / (type == :float ? 100.0 : 1)
         end
