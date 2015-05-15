@@ -1,6 +1,7 @@
 require 'sequel'
 require 'multi_json'
 require 'ostruct'
+require 'bogo'
 
 require 'fission-data/version'
 require 'fission'
