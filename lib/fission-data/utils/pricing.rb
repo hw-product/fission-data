@@ -30,6 +30,7 @@ module Fission
         # @param major_cost [Numeric]
         # @return [Integer]
         def price=(major_cost)
+          major_cost = major_cost.is_a?(Numeric) ? major_cost : major_cost.to_f
           _price = self.price
           _price.cost = major_cost * 100
           _price.save
