@@ -25,6 +25,17 @@ module Fission
           end
         end
 
+        # Set price provided in major units as minor unit price
+        #
+        # @param major_cost [Numeric]
+        # @return [Integer]
+        def price=(major_cost)
+          _price = self.price
+          _price.cost = major_cost * 100
+          _price.save
+          _price.cost
+        end
+
         # @return [Fixnum] unmodified cost (minor units)
         def raw_cost
           self.price.cost
