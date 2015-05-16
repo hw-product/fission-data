@@ -26,11 +26,15 @@ module Fission
 #          end
         end
 
+
+        # !!! TODO: Add filtering on subscription for "active"-type status
+
+
         # @return [Array<Plan>]
         def plans
           plan_ids = remote_data.fetch(:subscriptions, :data, []).map do |subscription|
             subscription.get(:plan, :metadata, :fission_plans).to_s.split(',')
-          end.compact.flatten.uniq.map(&:to_i)
+          end.flatten.compact.uniq.map(&:to_i)
           Plan.where(:id => plan_ids).all
         end
 
