@@ -43,32 +43,6 @@ module Fission
           validates_presence :name
         end
 
-        class << self
-
-          # Lookup account instance
-          #
-          # @param name [String] account name
-          # @param source [String] source name
-          # @param args [Symbol] arugment list (:remote)
-          # @return [NilClass, Fission::Data::Models::Account]
-          # @note :remote option will attempt load from remote payment source
-          def lookup(name, source, *args)
-            source = Source.find_by_name(source)
-            account = source.accounts_dataset.where(
-              :name => name
-            ).first
-            if(account.nil? && args.include?(:remote))
-              self.create(
-                :name => name,
-                :source_id => source.id
-              )
-              CustomerPayment.remote_load(account)
-            end
-            account
-          end
-
-        end
-
         # @return [String] source and account name composite
         def expanded_name
           [self.source.try(:name), self.name].join('_')
@@ -125,6 +99,11 @@ module Fission
             self.values[:metadata] = (self.values[:metadata] || {}).to_smash
           end
           self.values[:metadata]
+        end
+
+        # @return [CustomerPayment]
+        def customer_payment
+          self.customer_payments.first
         end
 
       end
