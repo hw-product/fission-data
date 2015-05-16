@@ -22,7 +22,7 @@ module Fission
         # @return [Smash] remote customer data
         def remote_data
 #          memoize(:remote_data) do
-            ::Stripe::Customer.retrieve(self.customer_id).to_hash.to_smash
+            MultiJson.load(::Stripe::Customer.retrieve(self.customer_id).to_json).to_smash
 #          end
         end
 
@@ -40,12 +40,12 @@ module Fission
 
         # @return [Array<ProductFeature>]
         def product_features
-          plans.map(&:product_features).uniq
+          ProductFeature.where(:id => plans.map(&:product_features).flatten.map(&:id))
         end
 
         # @return [Array<Permission>] permissions valid for this payment
         def permission_list
-          product_features.map(&:permissions).uniq
+          Permission.where(:id => product_features.map(&:permissions).flatten.map(&:id))
         end
 
         # Check if permission is valid
@@ -53,7 +53,7 @@ module Fission
         # @param permission [Permission]
         # @return [TrueClass, FalseClass]
         def valid_permission?(permission)
-          permission_list.include?(permission)
+          permission_list.where(:id => permission.id).count == 1
         end
 
       end

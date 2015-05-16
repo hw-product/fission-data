@@ -71,7 +71,7 @@ module Fission
         def product_features
           (self.product_features_dataset.all +
             customer_payments.map(&:product_features).map(&:all)
-          ).uniq
+          ).flatten.compact.uniq
         end
 
         # @return [Array<Fission::Data::Models::Service>]
