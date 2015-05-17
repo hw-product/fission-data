@@ -6,7 +6,7 @@ module Fission
       # Customer payment proxy
       class CustomerPayment < Sequel::Model
 
-#        include Bogo::Memoization
+        include Bogo::Memoization
 
         # @return [Hash] remote account data
         attr_reader :remote_data
@@ -21,14 +21,12 @@ module Fission
 
         # @return [Smash] remote customer data
         def remote_data
-#          memoize(:remote_data) do
+          memoize(:remote_data) do
             MultiJson.load(::Stripe::Customer.retrieve(self.customer_id).to_json).to_smash
-#          end
+          end
         end
 
-
         # !!! TODO: Add filtering on subscription for "active"-type status
-
 
         # @return [Array<Plan>]
         def plans(within_product=nil)

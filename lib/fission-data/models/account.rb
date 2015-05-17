@@ -72,8 +72,8 @@ module Fission
         def product_features(within_product=nil)
           (self.product_features_dataset.all +
             customer_payments.map{|cust_pay|
-              cust_pay.product_features(within_product)
-            }.map(&:all)
+              cust_pay.product_features(within_product).all
+            }.flatten
           ).flatten.compact.uniq
         end
 
@@ -84,10 +84,7 @@ module Fission
 
         # @return [Array<Fission::Data::Models::Product>]
         def products(within_product=nil)
-          (product_features.map(&:product) +
-            customer_payments.map{|cust_pay|
-              cust_pay.plans(within_product)
-            }.map(&:product).compact).uniq
+          product_features(within_product).map(&:product).uniq
         end
 
         # User is owner of this account
