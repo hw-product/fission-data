@@ -153,6 +153,16 @@ module Fission
           active_session
         end
 
+        # Check if provided path is valid within active permission set
+        #
+        # @param path [String]
+        # @return [TrueClass, FalseClass]
+        def valid_path?(path)
+          !!self.run_state.active_permissions.map(&:pattern).detect do |regex|
+            regex.match(path)
+          end
+        end
+
         class << self
 
           # Attempt to locate user and authenticate via password
