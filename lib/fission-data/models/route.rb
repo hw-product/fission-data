@@ -19,7 +19,7 @@ module Fission
         def validate
           super
           validates_presence :name
-          validates_unique :name
+          validates_unique [:name, :account_id]
         end
 
         def before_destroy
