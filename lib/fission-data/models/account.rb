@@ -53,36 +53,41 @@ module Fission
         # on customer payment)
         #
         # @return [Array<Permission>]
-        def active_permissions
+        def active_permissions(within_product)
           perms = self.permissions.find_all do |perm|
             if(perm.customer_validate)
               customer_payments.detect do |customer_payment|
-                customer_payment.valid_permission?(perm)
+                customer_payment.valid_permission?(perm, within_product)
               end
             else
               true
             end
-          end + self.customer_payments.map(&:permission_list).map(&:all) +
-            self.product_features.map(&:permissions)
+          end + self.customer_payments.map{|cust_pay|
+            cust_pay.permission_list(within_product)
+          }.map(&:all) + self.product_features(within_product).map(&:permissions)
           perms.flatten.compact.uniq
         end
 
         # @return [Array<Fission::Data::Models::ProductFeature>]
-        def product_features
+        def product_features(within_product=nil)
           (self.product_features_dataset.all +
-            customer_payments.map(&:product_features).map(&:all)
+            customer_payments.map{|cust_pay|
+              cust_pay.product_features(within_product)
+            }.map(&:all)
           ).flatten.compact.uniq
         end
 
         # @return [Array<Fission::Data::Models::Service>]
-        def services
-          product_features.map(&:services).flatten.compact.uniq
+        def services(within_product)
+          product_features(within_product).map(&:services).flatten.compact.uniq
         end
 
         # @return [Array<Fission::Data::Models::Product>]
-        def products
+        def products(within_product=nil)
           (product_features.map(&:product) +
-            customer_payments.map(&:plans).map(&:product).compact).uniq
+            customer_payments.map{|cust_pay|
+              cust_pay.plans(within_product)
+            }.map(&:product).compact).uniq
         end
 
         # User is owner of this account

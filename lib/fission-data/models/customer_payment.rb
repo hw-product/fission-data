@@ -31,29 +31,29 @@ module Fission
 
 
         # @return [Array<Plan>]
-        def plans
+        def plans(within_product=nil)
           plan_ids = remote_data.fetch(:subscriptions, :data, []).map do |subscription|
             subscription.get(:plan, :metadata, :fission_plans).to_s.split(',')
           end.flatten.compact.uniq.map(&:to_i)
-          Plan.where(:id => plan_ids).all
+          Plan.where(:id => plan_ids, :product_id => within_product ? within_product.id : nil).all
         end
 
         # @return [Array<ProductFeature>]
-        def product_features
-          ProductFeature.where(:id => plans.map(&:product_features).flatten.map(&:id))
+        def product_features(within_product=nil)
+          ProductFeature.where(:id => plans(within_product).map(&:product_features).flatten.map(&:id))
         end
 
         # @return [Array<Permission>] permissions valid for this payment
-        def permission_list
-          Permission.where(:id => product_features.map(&:permissions).flatten.map(&:id))
+        def permission_list(within_product=nil)
+          Permission.where(:id => product_features(within_product).map(&:permissions).flatten.map(&:id))
         end
 
         # Check if permission is valid
         #
         # @param permission [Permission]
         # @return [TrueClass, FalseClass]
-        def valid_permission?(permission)
-          permission_list.where(:id => permission.id).count == 1
+        def valid_permission?(permission, within_product=nil)
+          permission_list(within_product).where(:id => permission.id).count == 1
         end
 
       end
