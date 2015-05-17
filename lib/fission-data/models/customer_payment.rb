@@ -19,6 +19,11 @@ module Fission
           validates_unique [:account_id, :type]
         end
 
+        def reload(*args)
+          super
+          unmemoize(:remote_data)
+        end
+
         # @return [Smash] remote customer data
         def remote_data
           memoize(:remote_data) do
@@ -30,10 +35,14 @@ module Fission
 
         # @return [Array<Plan>]
         def plans(within_product=nil)
-          plan_ids = remote_data.fetch(:subscriptions, :data, []).map do |subscription|
+          Plan.where(:id => plan_ids, :product_id => within_product ? within_product.id : nil).all
+        end
+
+        # @return [Array<Integer>] Internal Plan IDs subscribed
+        def plan_ids
+          remote_data.fetch(:subscriptions, :data, []).map do |subscription|
             subscription.get(:plan, :metadata, :fission_plans).to_s.split(',')
           end.flatten.compact.uniq.map(&:to_i)
-          Plan.where(:id => plan_ids, :product_id => within_product ? within_product.id : nil).all
         end
 
         # @return [Array<ProductFeature>]
