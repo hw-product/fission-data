@@ -274,6 +274,7 @@ Sequel.migration do
       DateTime :updated_at
       DateTime :created_at
       foreign_key :account_id, :null => false
+      index [:account_id, :name], :unique => true
       primary_key :id
     end
 
