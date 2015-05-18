@@ -2,13 +2,10 @@ require 'fission-data'
 
 Rails.application.config.before_initialize do
 
-  unless(Fission::Data::Models::Product.find_by_internal_name('fission'))
-    product = Fission::Data::Models::Product.create(:name => 'Fission')
-    feature = product.add_product_feature(:name => 'fission_full_access')
-    source = Fission::Data::Models::Source.create(:name => 'internal')
-    permission = feature.add_permission(:name => 'fission-admin', :pattern => 'admin/.*')
-    user = source.add_user(:username => 'fission-admin')
-    user.accounts.first.add_product_feature(feature)
-  end
+  source = Fission::Data::Models::Source.create(:name => 'internal')
+  Fission::Data::Models::User.find_or_create(
+    :username => 'fission-admin',
+    :source_id => source.id
+  )
 
 end
