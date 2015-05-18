@@ -19,6 +19,12 @@ module Fission
         many_to_one :source
         one_to_many :tokens
 
+        def before_save
+          super
+          validates_presence :source_id
+          validates_unique [:username, :source_id]
+        end
+
         # Create new instance
         # @note used for run_state initializaiton
         def initialize(*_)
@@ -185,6 +191,9 @@ module Fission
           # @note refactor this. used mainly for password auth.
           def create(attributes)
             user = new(:username => attributes[:username])
+            if(attributes[:source_id])
+              user.source_id = attributes[:source_id]
+            end
             if(user.save)
               if(attributes[:provider] == :internal)
                 identity = Identity.new(
