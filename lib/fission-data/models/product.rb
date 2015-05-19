@@ -22,6 +22,7 @@ module Fission
           validates_presence [:name, :internal_name]
           validates_unique :name
           validates_unique :internal_name
+          validates_unique :vanity_dns
         end
 
         # force internal name characters
