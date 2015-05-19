@@ -10,6 +10,11 @@ module Fission
         many_to_one :log, :class => Log
         many_to_many :tags, :class => Tag, :right_key => :tag_id, :join_table => 'log_entries_tags'
 
+        def before_destroy
+          super
+          self.remove_all_tags
+        end
+
         class << self
           # Add a log entry to a log
           #

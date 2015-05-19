@@ -10,6 +10,11 @@ module Fission
         one_to_many :log_entries, :class => LogEntry
         many_to_one :account, :class => Account
 
+        def before_destroy
+          super
+          log_entries.map(&:destroy)
+        end
+
         # Validate instance attributes
         def validate
           super
