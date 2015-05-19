@@ -33,7 +33,7 @@ module Fission
           if(raw_cost > 0)
             _cost = raw_cost
           else
-            _cost = product.service_group.generated_cost(:integer) +
+            _cost = (product && product.service_group ? product.service_group.generated_cost(:integer) : 0) +
               product_features.map{|pf| pf.generated_cost(:integer) }.inject(&:+).to_i
           end
           _cost / (type == :float ? 100.0 : 1)
