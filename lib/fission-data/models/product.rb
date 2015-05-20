@@ -36,7 +36,7 @@ module Fission
           super
           self.remove_all_repositories
           self.plans.map(&:destroy)
-          self.product_features(&:destroy)
+          self.product_features.map(&:destroy)
         end
 
       end
