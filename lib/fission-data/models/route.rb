@@ -12,7 +12,7 @@ module Fission
         many_to_many :custom_services, :order => :position
         many_to_many :services, :order => :position
         many_to_many :service_groups, :order => :position
-        many_to_many :payload_matchers
+        one_to_many :route_payload_filters
         many_to_many :repositories
 
         # Validate instance attributes
@@ -28,7 +28,7 @@ module Fission
           self.remove_all_custom_services
           self.remove_all_service_groups
           self.route_configs.map(&:destroy)
-          self.remove_all_payload_matchers
+          self.route_payload_filters.map(&:destroy)
           self.remove_all_repositories
         end
 

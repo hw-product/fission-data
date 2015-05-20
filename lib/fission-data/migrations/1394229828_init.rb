@@ -348,7 +348,14 @@ Sequel.migration do
       index [:route_config_id, :account_config_id, :position], :unique => true
     end
 
-    create_join_table(:payload_matcher_id => :payload_matchers, :route_id => :routes)
+    create_table(:route_payload_filters) do
+      String :name, :null => false
+      String :description
+      foreign_key :route_id, :null => false
+      primary_key :id
+    end
+
+    create_join_table(:payload_matcher_id => :payload_matchers, :route_payload_filter_id => :route_payload_filters)
     create_join_table(:repository_id => :repositories, :route_id => :routes)
   end
 end

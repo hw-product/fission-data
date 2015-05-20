@@ -151,6 +151,7 @@ module Fission
       autoload :Repository, 'fission-data/models/repository'
       autoload :Route, 'fission-data/models/route'
       autoload :RouteConfig, 'fission-data/models/route_config'
+      autoload :RoutePayloadFilter, 'fission-data/models/route_payload_filter'
       autoload :Service, 'fission-data/models/service'
       autoload :ServiceConfigItem, 'fission-data/models/service_config_item'
       autoload :ServiceGroup, 'fission-data/models/service_group'
