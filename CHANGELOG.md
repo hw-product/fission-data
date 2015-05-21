@@ -1,3 +1,12 @@
+# v0.2.0
+* Consolidate migrations (start the party over)
+* Add new models to support new dynamic features:
+  - backend service information
+  - custom services
+  - route based configurations
+  - payload matchers
+  - user defined plans
+
 # v0.1.8
 * Remove cipher module (fetch from fission proper)
 * Add new models and supporting migrations:
