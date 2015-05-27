@@ -9,10 +9,14 @@ module Fission
 
         many_to_one :payload_match_rule
         many_to_many :route_configs
+        many_to_many :route_payload_filters
+        many_to_many :service_group_payload_filters
 
         def before_destroy
           super
           self.remove_all_route_configs
+          self.remove_all_route_payload_filters
+          self.remove_all_service_group_payload_filters
         end
 
         def before_save

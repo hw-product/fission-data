@@ -155,6 +155,7 @@ module Fission
       autoload :Service, 'fission-data/models/service'
       autoload :ServiceConfigItem, 'fission-data/models/service_config_item'
       autoload :ServiceGroup, 'fission-data/models/service_group'
+      autoload :ServiceGroupPayloadFilter, 'fission-data/models/service_group_payload_filter'
       autoload :Session, 'fission-data/models/session'
       autoload :Source, 'fission-data/models/source'
       autoload :StaticPage, 'fission-data/models/static_page'

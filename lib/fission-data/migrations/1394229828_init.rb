@@ -45,6 +45,8 @@ Sequel.migration do
     create_table(:customer_payments) do
       String :customer_id, :null => false
       String :type, :null => false
+      DateTime :updated_at
+      DateTime :created_at
       foreign_key :account_id, :null => false
       primary_key :id
       index [:account_id, :type], :unique => true
@@ -300,6 +302,8 @@ Sequel.migration do
       String :name, :null => false
       String :endpoint, :null => false
       TrueClass :enabled, :null => false, :default => true
+      DateTime :updated_at
+      DateTime :created_at
       foreign_key :account_id, :null => false
       primary_key :id
       index [:name, :account_id], :unique => true
@@ -318,6 +322,8 @@ Sequel.migration do
       String :name, :null => false
       String :description
       Integer :position, :null => false
+      DateTime :updated_at
+      DateTime :created_at
       foreign_key :route_id, :null => false
       index [:name, :route_id], :unique => true
       index [:name, :route_id, :position], :unique => true
@@ -328,11 +334,15 @@ Sequel.migration do
       String :name, :null => false, :unique => true
       String :payload_key, :null => false, :unique => true
       String :description
+      DateTime :updated_at
+      DateTime :created_at
       primary_key :id
     end
 
     create_table(:payload_matchers) do
       String :value, :null => false
+      DateTime :updated_at
+      DateTime :created_at
       foreign_key :account_id, :null => false
       foreign_key :payload_match_rule_id, :null => false
       primary_key :id
@@ -351,11 +361,23 @@ Sequel.migration do
     create_table(:route_payload_filters) do
       String :name, :null => false
       String :description
+      DateTime :updated_at
+      DateTime :created_at
       foreign_key :route_id, :null => false
       primary_key :id
     end
 
+    create_table(:service_group_payload_filters) do
+      String :name, :null => false
+      String :description
+      DateTime :updated_at
+      DateTime :created_at
+      foreign_key :service_group_id, :null => false
+      primary_key :id
+    end
+
     create_join_table(:payload_matcher_id => :payload_matchers, :route_payload_filter_id => :route_payload_filters)
+    create_join_table(:payload_matcher_id => :payload_matchers, :service_group_id => :service_groups)
     create_join_table(:repository_id => :repositories, :route_id => :routes)
   end
 end

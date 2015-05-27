@@ -10,6 +10,7 @@ module Fission
         include Utils::Pricing
 
         one_to_many :products
+        one_to_many :service_group_payload_filters
         many_to_many :product_features
         many_to_many :services, :order => :position
         many_to_many :prices
@@ -25,6 +26,7 @@ module Fission
           super
           self.remove_all_product_features
           self.remove_all_services
+          self.service_group_payload_filters.map(&:destroy)
           self.prices.map(&:destroy)
         end
 
