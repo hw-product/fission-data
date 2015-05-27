@@ -378,7 +378,7 @@ Sequel.migration do
     end
 
     create_join_table(:payload_matcher_id => :payload_matchers, :route_payload_filter_id => :route_payload_filters)
-    create_join_table(:payload_matcher_id => :payload_matchers, :service_group_id => :service_groups)
+    create_join_table(:payload_matcher_id => :payload_matchers, :service_group_payload_filter_id => :service_group_payload_filters)
     create_join_table(:repository_id => :repositories, :route_id => :routes)
   end
 end
