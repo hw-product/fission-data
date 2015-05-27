@@ -22,7 +22,7 @@ module Fission
         def before_save
           super
           validates_presence [:account_id, :payload_match_rule_id, :value]
-          validates_uniqueness [:account_id, :payload_match_rule_id, :value]
+          validates_unique [:account_id, :payload_match_rule_id, :value]
         end
 
       end
