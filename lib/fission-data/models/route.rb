@@ -22,6 +22,11 @@ module Fission
           validates_unique [:name, :account_id]
         end
 
+        def before_save
+          super
+          self.name = Bogo::Utility.snake(self.name).gsub(/\s+/, '_')
+        end
+
         def before_destroy
           super
           self.remove_all_services
