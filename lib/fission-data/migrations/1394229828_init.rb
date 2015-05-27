@@ -345,6 +345,7 @@ Sequel.migration do
       DateTime :created_at
       foreign_key :account_id, :null => false
       foreign_key :payload_match_rule_id, :null => false
+      index [:account_id, :payload_match_rule_id, :value], :unique => true
       primary_key :id
     end
 
