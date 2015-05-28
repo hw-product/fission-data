@@ -1,3 +1,7 @@
+# v0.2.2
+* Force snaked name on routes
+* Add filter packs to service groups
+
 # v0.2.0
 * Consolidate migrations (start the party over)
 * Add new models to support new dynamic features:
