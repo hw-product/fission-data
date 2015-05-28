@@ -19,9 +19,23 @@ module Fission
           validates_unique [:account_id, :type]
         end
 
+        def before_save
+          super
+          self.metadata ||= {}
+          self.metadata = Sequel.pg_json(self.metadata)
+        end
+
         def reload(*args)
           super
           unmemoize(:remote_data)
+        end
+
+        # @return [Fission::Utils::Smash]
+        def metadata
+          unless(self.values[:metadata].is_a?(Smash))
+            self.values[:metadata] = (self.values[:metadata] || {}).to_smash
+          end
+          self.values[:metadata]
         end
 
         # @return [Smash] remote customer data

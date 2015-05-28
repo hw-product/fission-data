@@ -45,6 +45,7 @@ Sequel.migration do
     create_table(:customer_payments) do
       String :customer_id, :null => false
       String :type, :null => false
+      column :metadata, :json
       DateTime :updated_at
       DateTime :created_at
       foreign_key :account_id, :null => false
