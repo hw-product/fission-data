@@ -12,6 +12,7 @@ module Fission
         many_to_one :service_group
         many_to_many :repositories
         one_to_many :plans
+        one_to_one :product_style
 
         # Validate account attributes
         def validate
@@ -37,6 +38,9 @@ module Fission
           self.remove_all_repositories
           self.plans.map(&:destroy)
           self.product_features.map(&:destroy)
+          if(self.product_style)
+            self.product_style.destroy
+          end
         end
 
       end

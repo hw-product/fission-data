@@ -148,6 +148,7 @@ module Fission
       autoload :Price, 'fission-data/models/price'
       autoload :Product, 'fission-data/models/product'
       autoload :ProductFeature, 'fission-data/models/product_feature'
+      autoload :ProductStyle, 'fission-data/models/product_style'
       autoload :Repository, 'fission-data/models/repository'
       autoload :Route, 'fission-data/models/route'
       autoload :RouteConfig, 'fission-data/models/route_config'
