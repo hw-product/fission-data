@@ -12,7 +12,7 @@ module Fission
         many_to_one :service_group
         many_to_many :repositories
         one_to_many :plans
-        one_to_one :product_style
+        one_to_many :product_styles
 
         # Validate account attributes
         def validate
@@ -41,6 +41,10 @@ module Fission
           if(self.product_style)
             self.product_style.destroy
           end
+        end
+
+        def product_style
+          self.product_styles.first
         end
 
       end

@@ -7,12 +7,21 @@ module Fission
       # Custom product styling
       class ProductStyle < Sequel::Model
 
-        one_to_one :product
+        many_to_one :product
 
         def before_save
           super
-          validate_presence [:style, :product_id]
-          validate_unique :product_id
+          validates_presence [:style, :product_id]
+          validates_unique :product_id
+          self.style = Sequel.pg_json(self.style)
+        end
+
+        # @return [Fission::Utils::Smash]
+        def style
+          unless(self.values[:style].is_a?(Smash))
+            self.values[:style] = (self.values[:style] || {}).to_smash
+          end
+          self.values[:style]
         end
 
       end
