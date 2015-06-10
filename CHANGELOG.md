@@ -1,3 +1,7 @@
+# v0.2.4
+* Add category identifier to service
+* New product style model
+
 # v0.2.2
 * Force snaked name on routes
 * Add filter packs to service groups
