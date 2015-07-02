@@ -1,3 +1,7 @@
+# v0.2.6
+* Add name and description to token
+* Auto-set token value on save
+
 # v0.2.4
 * Add category identifier to service
 * New product style model
