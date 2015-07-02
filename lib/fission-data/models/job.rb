@@ -103,6 +103,17 @@ module Fission
           self.payload.fetch(:data, :router, :action, self.payload[:job])
         end
 
+        def github_payload?
+          self.payload[:data].key? "github"
+        end
+
+        def github_host
+          if self.github_payload?
+            uri = URI.parse(self.payload[:data][:github][:repository][:html_url])
+            URI::HTTP.build(:scheme => uri.scheme, :host => uri.host).to_s
+          end
+        end
+
         # @return [Symbol] current job status
         def status
           unless(self.values[:status])
