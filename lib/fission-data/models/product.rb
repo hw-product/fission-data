@@ -47,6 +47,21 @@ module Fission
           self.product_styles.first
         end
 
+        class << self
+
+          # Discover product via vanity dns
+          #
+          # @param dns_name [String]
+          # @return [Product, NilClass]
+          # @note supports glob matching
+          def find_by_vanity_dns(dns_name)
+            all.detect do |item|
+              File.fnmatch(item.vanity_dns.to_s, dns_name)
+            end
+          end
+
+        end
+
       end
     end
   end
