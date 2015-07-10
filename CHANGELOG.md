@@ -1,3 +1,6 @@
+# v0.2.8
+* Support glob matching on vanity dns
+
 # v0.2.6
 * Add name and description to token
 * Auto-set token value on save
