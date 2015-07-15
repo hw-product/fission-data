@@ -1,3 +1,7 @@
+# v0.2.10
+* Add glob_dns to products
+* Remove glob matching support on product vanity dns
+
 # v0.2.8
 * Support glob matching on vanity dns
 
