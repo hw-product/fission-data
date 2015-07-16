@@ -133,6 +133,11 @@ module Fission
           end
         end
 
+        # @return [Sequel::Dataset] events
+        def events
+          Event.where(:message_id => self.message_id)
+        end
+
       end
     end
   end
