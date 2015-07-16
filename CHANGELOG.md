@@ -1,3 +1,6 @@
+# v0.2.12
+* Add job Event model
+
 # v0.2.10
 * Add glob_dns to products
 * Remove glob matching support on product vanity dns
