@@ -137,6 +137,7 @@ module Fission
       autoload :AccountConfig, 'fission-data/models/account_config'
       autoload :CustomerPayment, 'fission-data/models/customer_payment'
       autoload :CustomService, 'fission-data/models/custom_service'
+      autoload :Event, 'fission-data/models/event'
       autoload :Identity, 'fission-data/models/identity'
       autoload :Job, 'fission-data/models/job'
       autoload :LogEntry, 'fission-data/models/log_entry'
