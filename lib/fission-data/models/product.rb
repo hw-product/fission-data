@@ -13,6 +13,7 @@ module Fission
         many_to_many :repositories
         one_to_many :plans
         one_to_many :product_styles
+        many_to_many :enabled_products, :join_table => :products_enabled_products, :right_key => :enabled_product_id, :class => Product
 
         # Validate account attributes
         def validate
