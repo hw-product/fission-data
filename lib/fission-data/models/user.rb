@@ -130,14 +130,19 @@ module Fission
         # @return [Smash]
         def session
           unless(self.active_session)
-            session = Session.create(:user => self, :data => Smash.new)
+            Session.create(:user => self, :data => Smash.new)
             self.reload
             self.save
           end
-          unless(self.active_session.data[self.run_state.random_sec])
-            self.active_session.data[self.run_state.random_sec] = Smash.new
+          unless(self.active_session.data[session_key])
+            self.active_session.data[session_key] = Smash.new
           end
-          self.active_session.data[self.run_state.random_sec]
+          self.active_session.data[self.session_key]
+        end
+
+        # @return [Object] key for session
+        def session_key
+          self.run_state.random_sec || :default
         end
 
         # Reset the `session_data`
