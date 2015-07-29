@@ -53,7 +53,7 @@ module Fission
         # on customer payment)
         #
         # @return [Array<Permission>]
-        def active_permissions(within_product)
+        def active_permissions(within_product=nil)
           perms = self.permissions.find_all do |perm|
             if(perm.customer_validate)
               customer_payments.detect do |customer_payment|
