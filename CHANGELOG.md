@@ -1,3 +1,6 @@
+# v0.2.16
+* Provide isolated product filter behavior
+
 # v0.2.14
 * Support product linking for isolated models
 * Support multiple isolated sessions
