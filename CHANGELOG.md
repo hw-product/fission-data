@@ -1,3 +1,8 @@
+# v0.2.14
+* Support product linking for isolated models
+* Support multiple isolated sessions
+* Default session key when none available
+
 # v0.2.12
 * Add job Event model
 
