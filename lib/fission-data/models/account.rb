@@ -70,11 +70,21 @@ module Fission
 
         # @return [Array<Fission::Data::Models::ProductFeature>]
         def product_features(within_product=nil)
-          (self.product_features_dataset.all +
+          if(within_product)
+            product_filter = within_product.enabled_products.map(&:id) + [within_product.id]
+          end
+          pfs = (self.product_features_dataset.all +
             customer_payments.map{|cust_pay|
               cust_pay.product_features(within_product).all
             }.flatten
           ).flatten.compact.uniq
+          if(product_filter)
+            pfs.find_all do |pf|
+              product_filter.include?(pf.product_id)
+            end
+          else
+            pfs
+          end
         end
 
         # @return [Array<Fission::Data::Models::Service>]

@@ -49,7 +49,8 @@ module Fission
 
         # @return [Array<Plan>]
         def plans(within_product=nil)
-          Plan.where(:id => plan_ids, :product_id => within_product ? within_product.id : nil).all
+          product_id = within_product ? within_product.enabled_products.map(&:id) + [within_product.id] : nil
+          Plan.where(:id => plan_ids, :product_id => product_id).all
         end
 
         # @return [Array<Integer>] Internal Plan IDs subscribed
