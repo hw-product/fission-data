@@ -28,7 +28,7 @@ module Fission
           def current_dataset_ids
             Job.dataset.join_table(:left, :jobs___j2) do |j2, j|
               ({Sequel.qualify(j, :message_id) => Sequel.qualify(j2, :message_id)}) &
-                (Sequel.qualify(j, :created_at) < Sequel.qualify(j2, :created_at))
+                (Sequel.qualify(j, :id) < Sequel.qualify(j2, :id))
             end.where(:j2__id => nil).select(:jobs__id)
           end
 
