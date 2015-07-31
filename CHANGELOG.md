@@ -1,3 +1,6 @@
+# v0.2.18
+* Properly collapse jobs when fetching current revision
+
 # v0.2.16
 * Provide isolated product filter behavior
 
