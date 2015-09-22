@@ -18,8 +18,8 @@ module Fission
       def logger
         if(defined?(Rails))
           Rails.logger
-        elsif(defined?(Celluloid))
-          Celluloid.logger
+        elsif(defined?(Carnivore))
+          Carnivore::Logger
         else
           require 'logger'
           Thread.current[:fission_data_logger] ||= Logger.new($stdout)
