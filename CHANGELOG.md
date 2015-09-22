@@ -1,3 +1,7 @@
+# v0.3.0
+* Use common logger from carnivore
+* Update fission constraint
+
 # v0.2.18
 * Properly collapse jobs when fetching current revision
 
