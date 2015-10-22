@@ -1,3 +1,6 @@
+# v0.3.4
+* Conditionally define setup callback to prevent failed loads
+
 # v0.3.2
 * Preload models when data is in use
 
