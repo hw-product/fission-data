@@ -1,3 +1,6 @@
+# v0.3.2
+* Preload models when data is in use
+
 # v0.3.0
 * Use common logger from carnivore
 * Update fission constraint
