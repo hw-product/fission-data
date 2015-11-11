@@ -95,5 +95,3 @@ module Fission
 
   end
 end
-
-Thread.exclusive{ Fission::Data::Models.constants }
