@@ -164,7 +164,7 @@ module Fission
       autoload :Tag, 'fission-data/models/tag'
       autoload :Token, 'fission-data/models/token'
       autoload :User, 'fission-data/models/user'
-      autoload :Whitelist, 'fission-data/models/whitelist'
+#      autoload :Whitelist, 'fission-data/models/whitelist'
 
     end
   end
