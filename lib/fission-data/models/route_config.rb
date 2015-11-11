@@ -40,6 +40,13 @@ module Fission
           self.reload.account_configs
         end
 
+        # @return [Smash]
+        def merged_configuration
+          self.account_configs.map(&:data).reverse.inject(Smash.new) do |memo, data|
+            memo.deep_merge(data)
+          end
+        end
+
       end
     end
   end
