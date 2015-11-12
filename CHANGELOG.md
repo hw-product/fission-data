@@ -1,3 +1,8 @@
+# v0.3.6
+* Remove exclusive loader
+* Disable loading of whitelist
+* Add helper to route config to provide merged configuration
+
 # v0.3.4
 * Conditionally define setup callback to prevent failed loads
 
