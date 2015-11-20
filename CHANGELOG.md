@@ -1,3 +1,7 @@
+# v0.3.8
+* Add `icon` and `alias` to Service model
+* Add `Service#display_name` helper
+
 # v0.3.6
 * Remove exclusive loader
 * Disable loading of whitelist
