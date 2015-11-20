@@ -29,6 +29,10 @@ module Fission
           self.service_config_items.map(&:destroy)
         end
 
+        def display_name
+          self.alias.to_s.empty? ? self.name : self.alias
+        end
+
       end
     end
   end
