@@ -73,7 +73,16 @@ module Fission
                 nil
               ]
             end
-            self.dataset.from(Sequel.lit("(select #{customs.map(&:first).join(', ')} from #{customs.map(&:last).compact.join(', ')} group by jobs.id) jobs")).where(:id => current_dataset_ids)
+            id_restrictor = hash.fetch(:id_restrictor, current_dataset_ids)
+            if(hash[:account_id])
+              account_restrictor = " where jobs.account_id IN (#{[hash[:account_id]].flatten.compact.join('.')}) "
+            end
+            self.dataset.from(
+              Sequel.lit(
+                "(select #{customs.map(&:first).join(', ')} from #{customs.map(&:last).compact.join(', ')}" <<
+                "#{account_restrictor}group by jobs.id) jobs"
+              )
+            ).where(:id => id_restrictor)
           end
 
         end
