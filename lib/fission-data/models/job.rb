@@ -76,6 +76,9 @@ module Fission
             id_restrictor = hash.fetch(:id_restrictor, current_dataset_ids)
             if(hash[:account_id])
               account_restrictor = " where jobs.account_id IN (#{[hash[:account_id]].flatten.compact.join('.')}) "
+              unless(hash[:id_restrictor])
+                id_restrictor.where(:jobs__account_id => hash[:account_id])
+              end
             end
             self.dataset.from(
               Sequel.lit(
