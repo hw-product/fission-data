@@ -150,6 +150,34 @@ module Fission
           Event.where(:message_id => self.message_id)
         end
 
+        # Services composing route
+        #
+        # @param as_models [Truthy, Falsey] return Service model instances
+        # @return [Array<String>, Array<Service>]
+        def route_services(as_models=false)
+          if(as_models)
+            (completed_services + pending_services).map do |s_name|
+              Service.find_by_name(s_name)
+            end.compact
+          else
+            completed_services + pending_services
+          end
+        end
+
+        # @return [Array<String>]
+        def pending_services(as_models=false)
+          result = self.payload.fetch(:data, :router, :route, [])
+          as_models ? result.map{|i| Service.find_by_name(i)}.compact : result
+        end
+
+        # @return [Array<String>]
+        def completed_services(as_models=false)
+          result = self.payload.fetch(:complete, []).find_all do |c|
+            !c.include?(':')
+          end
+          as_models ? result.map{|i| Service.find_by_name(i)}.compact : result
+        end
+
       end
     end
   end
