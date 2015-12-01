@@ -1,3 +1,7 @@
+# v0.3.10
+* Add trial period to plan model
+* Service helper methods for job model
+
 # v0.3.8
 * Add `icon` and `alias` to Service model
 * Add `Service#display_name` helper
