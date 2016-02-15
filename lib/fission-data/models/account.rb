@@ -21,6 +21,7 @@ module Fission
         many_to_one :source
         many_to_many :product_features
         one_to_many :routes
+        many_to_many :notifications
 
         def before_save
           super

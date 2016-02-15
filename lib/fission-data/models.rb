@@ -142,6 +142,7 @@ module Fission
       autoload :Job, 'fission-data/models/job'
       autoload :LogEntry, 'fission-data/models/log_entry'
       autoload :Log, 'fission-data/models/log'
+      autoload :Notification, 'fission-data/models/notification'
       autoload :PayloadMatcher, 'fission-data/models/payload_matcher'
       autoload :PayloadMatchRule, 'fission-data/models/payload_match_rule'
       autoload :Permission, 'fission-data/models/permission'

@@ -15,6 +15,8 @@ module Fission
         one_to_many :owned_accounts, :class => Account
         many_to_many :member_accounts, :class => Account, :right_key => :account_id, :join_table => 'accounts_members'
         many_to_many :managed_accounts, :class => Account, :right_key => :account_id, :join_table => 'accounts_owners'
+        many_to_many :notifications
+        many_to_many :seen_notifications, :class => Notification, :right_key => :notification_id, :join_table => 'seen_notifications'
         one_to_many :identities
         many_to_one :source
         one_to_many :tokens
