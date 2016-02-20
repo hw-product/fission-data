@@ -188,6 +188,29 @@ module Fission
           }
         end
 
+        # @return [Dataset]
+        def all_open_notifications
+          if(self.run_state.current_account)
+            acct_id = self.run_state.current_account.id
+          else
+            acct_id = -1
+          end
+          Notification.select(Sequel.lit('notifications.*')).join_table(
+            :left, :accounts_notifications,
+            :notification_id => :notifications__id
+          ).join_table(
+            :left, :notifications_users,
+            :notification_id => :notifications__id
+          ).join_table(
+            :left, :users, :id => :user_id
+          ).where{
+            Sequel.|({:open_date => nil}, (open_date <= Time.now.to_datetime)) &
+              Sequel.|({:close_date => nil}, (close_date <= Time.now.to_datetime))
+          }.where(
+            Sequel.|({:user_id => self.id}, {:account_id => acct_id})
+          )
+        end
+
         class << self
 
           # Attempt to locate user and authenticate via password
