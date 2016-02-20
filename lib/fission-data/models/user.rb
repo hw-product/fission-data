@@ -180,6 +180,14 @@ module Fission
           end
         end
 
+        # @return [Dataset]
+        def open_notifications
+          self.notifications_dataset.where{
+            Sequel.|({:open_date => nil}, (open_date <= Time.now.to_datetime)) &
+              Sequel.|({:close_date => nil}, (close_date <= Time.now.to_datetime))
+          }
+        end
+
         class << self
 
           # Attempt to locate user and authenticate via password

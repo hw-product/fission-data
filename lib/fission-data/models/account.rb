@@ -119,6 +119,14 @@ module Fission
           self.customer_payments.first
         end
 
+        # @return [Dataset]
+        def open_notifications
+          self.notifications_dataset.where{
+            Sequel.|({:open_date => nil}, (open_date <= Time.now.to_datetime)) &
+              Sequel.|({:close_date => nil}, (close_date <= Time.now.to_datetime))
+          }
+        end
+
       end
     end
   end

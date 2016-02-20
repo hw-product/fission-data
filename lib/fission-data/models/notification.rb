@@ -9,6 +9,7 @@ module Fission
 
         many_to_many :accounts
         many_to_many :users
+        many_to_many :app_event_matchers
         many_to_many :seen_users, :class => User, :right_key => :user_id, :join_table => 'seen_notifications'
 
         # Validate notification attributes

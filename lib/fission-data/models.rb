@@ -135,6 +135,7 @@ module Fission
 
       autoload :Account, 'fission-data/models/account'
       autoload :AccountConfig, 'fission-data/models/account_config'
+      autoload :AppEventMatcher, 'fission-data/models/app_event_matcher'
       autoload :CustomerPayment, 'fission-data/models/customer_payment'
       autoload :CustomService, 'fission-data/models/custom_service'
       autoload :Event, 'fission-data/models/event'
