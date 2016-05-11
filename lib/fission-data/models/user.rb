@@ -102,7 +102,7 @@ module Fission
         # @return [NilClass, String]
         def token_for(provider)
           ident = self.identities_dataset.where(:provider => provider.to_s).first
-          if(ident)
+          if(ident && ident.credentials)
             ident.credentials[:token]
           end
         end
